@@ -1,10 +1,8 @@
 import React from "react";
-import { Cormorant } from "next/font/google";
+
 import { cn } from "@/lib/utils";
 import { Button } from "../ui/button";
 import Link from "next/link";
-
-const cormorant = Cormorant({ subsets: ["latin"], weight: "400" });
 
 export default function Navbar() {
   const navs = [
@@ -30,8 +28,7 @@ export default function Navbar() {
       <div className="flex justify-between items-center">
         <div
           className={cn(
-            `text-2xl tracking-[0.3rem] text-muted-foreground shimmer`,
-            cormorant.className,
+            `text-2xl tracking-[0.3rem] text-muted-foreground shimmer font-display`,
           )}
         >
           PATINA

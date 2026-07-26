@@ -1,74 +1,80 @@
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import Image from "next/image";
 import React from "react";
+import Header from "./_home/header";
+import Marquee from "react-fast-marquee";
+import {
+  DotsThreeOutlineIcon,
+  ShieldIcon,
+} from "@phosphor-icons/react/dist/ssr";
+import Brands from "./_home/brands";
+import Arrival from "./_home/arrival";
+import Market from "./_home/market";
+import Verif from "./_home/verif";
+import DataGrid from "./_home/data-grid";
 
 export default function Page() {
   return (
     <>
-      <header className="h-[calc(100vh-4rem)] divide-x w-full border-b grid grid-cols-2">
-        <div className="h-full flex flex-col justify-center items-center">
-          <div className="w-full px-[6%] space-y-6">
-            <p className="text-[8px] tracking-[0.2rem] text-primary flex gap-4 items-center uppercase">
-              <div className="border-t border-primary/50 w-8" />
-              India's pre-owned watch market
-            </p>
-            <h1 className="text-7xl leading-[1] font-display">
-              Where watches <br /> become <br />
-              <span className="text-primary">assets.</span>
-            </h1>
-            <p className="text-muted-foreground text-xs uppercase font-light leading-normal">
-              Buy, sell, and price second-hand watches with confidence. Built
-              for <br /> India's collectors, first-timers, and dealers — with
-              the security of a <br /> financial platform.
-            </p>
-            <div className="w-1/2 grid grid-cols-2 gap-4">
-              <Button size="lg">Browse Listings</Button>
-              <Button size="lg" variant="outline">
-                Sell A Watch
-              </Button>
+      <Header />
+      <Marquee speed={30} pauseOnHover>
+        {Array(10)
+          .fill({
+            title: "Rolex Submariner",
+            price: "₹ 1,20,000",
+            trend: "+6.5%",
+          })
+          .map((item, index) => (
+            <div
+              // biome-ignore lint/suspicious/noArrayIndexKey: sss
+              key={index}
+              className="flex flex-row gap-4 border-r p-3 items-center"
+            >
+              <h3 className="text-xs text-muted-foreground/50">{item.title}</h3>
+              <p className="text-xl text-muted-foreground font-display">
+                {item.price}
+              </p>
+              <p className="text-sm text-green-800">{item.trend}</p>
             </div>
-            <Separator />
-            <div className="w-1/2 grid grid-cols-4 gap-4">
-              <div className="">
-                <h4>12,400+</h4>
-                <p className="text-[10px] text-muted-foreground font-light uppercase">
-                  Watches Listed
-                </p>
-              </div>
-              <div className="">
-                <h4>₹18Cr+</h4>
-                <p className="text-[10px] text-muted-foreground font-light uppercase">
-                  Traded
-                </p>
-              </div>
-              <div className="">
-                <h4>12,400+</h4>
-                <p className="text-[10px] text-muted-foreground font-light uppercase">
-                  Users Joined
-                </p>
-              </div>
-              <div className="">
-                <h4>12,400+</h4>
-                <p className="text-[10px] text-muted-foreground font-light uppercase">
-                  Dealers
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="h-full w-full bg-radial from-[#110f0c]  to-[#111110]  grid grid-rows-2 divide-y">
-          <div className="flex flex-col justify-between items-start p-12">
-            <div className=""></div>
-            <div className=""></div>
-            <div className=""></div>
-          </div>
-          <div className="grid grid-cols-2 divide-x w-full">
-            <div className=""></div>
-            <div className=""></div>
-          </div>
-        </div>
-      </header>
-      lol
+          ))}
+      </Marquee>
+      <Brands />
+      <Arrival />
+      <Market />
+      <Verif />
+      <div className="py-24 bg-muted/30 text-center">
+        <p className="text-[10px] uppercase text-primary/50 tracking-[0.2rem]">
+          Why pre-owned watches
+        </p>
+        <h2 className="text-5xl font-display my-6">
+          "The pre-owned watch market is set to <br /> become the industry's
+          fastest-growing <br /> segment, reaching{" "}
+          <span className="text-primary">$29–32 billion</span> in sales by{" "}
+          <br />
+          2025."
+        </h2>
+        <p className="text-[10px] uppercase text-muted-foreground/50 tracking-[0.2rem]">
+          McKinsey & Company · Business of Fashion
+        </p>
+      </div>
+      <DataGrid />
+      <div className="p-12 bg-muted/30">
+        <p className="text-[10px] uppercase text-primary/50 tracking-[0.2rem]">
+          For dealers
+        </p>
+        <h2 className="text-5xl font-display my-6">
+          Bulk listings, lower commissions,
+          <br />
+          and a Dealer Verified badge.
+        </h2>
+        <p className="text-xs text-muted-foreground/50">
+          Dealers get access to bulk listing tools, a pricing insights
+          dashboard, priority placement, and commissions as low as 4%. Starting
+          at ₹10,000/month.
+        </p>
+      </div>
     </>
   );
 }

@@ -1,0 +1,273 @@
+"use client";
+
+import React, { useState } from "react";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Separator } from "@/components/ui/separator";
+import {
+  ShieldIcon,
+  HeartIcon,
+  ShareNetworkIcon,
+  ArrowLeftIcon,
+} from "@phosphor-icons/react/dist/ssr";
+
+export default function WatchDetailsPage() {
+  const [isWishlisted, setIsWishlisted] = useState(false);
+
+  const watchData = {
+    brand: "Rolex",
+    model: "Submariner Date 126610LN",
+    year: "2020",
+    reference: "126610LN",
+    price: "₹9,50,000",
+    condition: "Mint",
+    location: "Delhi NCR",
+    seller: "Mumbai Vintage Watches",
+    verified: true,
+    views: 342,
+    trend: "+4% vs market",
+    description:
+      "Excellent condition Rolex Submariner with original box and papers. Complete set with all documentation. Maintained regularly by authorized Rolex service center.",
+  };
+
+  return (
+    <div className="min-h-screen bg-background">
+      <div className="border-b sticky top-0 z-40 bg-background">
+        <div className="h-16 flex items-center justify-between px-12">
+          <Button variant="ghost" size="sm" asChild>
+            <Link href="/browse">
+              <ArrowLeftIcon size={16} className="mr-2" />
+              Back to Browse
+            </Link>
+          </Button>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 p-12 max-w-6xl mx-auto">
+        <div className="lg:col-span-2 space-y-8">
+          <div className="bg-muted/30 aspect-square rounded-lg flex items-center justify-center">
+            <p className="text-muted-foreground">[Watch Image]</p>
+          </div>
+
+          <Tabs defaultValue="details" className="w-full">
+            <TabsList className="grid w-full grid-cols-3">
+              <TabsTrigger value="details">Details</TabsTrigger>
+              <TabsTrigger value="condition">Condition Report</TabsTrigger>
+              <TabsTrigger value="seller">Seller Info</TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="details" className="space-y-6 mt-6">
+              <Card className="p-6 border border-border">
+                <h3 className="font-display text-lg mb-4">Specifications</h3>
+                <div className="grid grid-cols-2 gap-6">
+                  <div>
+                    <p className="text-[10px] uppercase text-muted-foreground mb-1">
+                      Reference
+                    </p>
+                    <p className="text-sm">{watchData.reference}</p>
+                  </div>
+                  <div>
+                    <p className="text-[10px] uppercase text-muted-foreground mb-1">
+                      Year
+                    </p>
+                    <p className="text-sm">{watchData.year}</p>
+                  </div>
+                  <div>
+                    <p className="text-[10px] uppercase text-muted-foreground mb-1">
+                      Case Material
+                    </p>
+                    <p className="text-sm">Stainless Steel</p>
+                  </div>
+                  <div>
+                    <p className="text-[10px] uppercase text-muted-foreground mb-1">
+                      Water Resistance
+                    </p>
+                    <p className="text-sm">300m / 1000ft</p>
+                  </div>
+                  <div>
+                    <p className="text-[10px] uppercase text-muted-foreground mb-1">
+                      Movement
+                    </p>
+                    <p className="text-sm">Automatic</p>
+                  </div>
+                  <div>
+                    <p className="text-[10px] uppercase text-muted-foreground mb-1">
+                      Condition
+                    </p>
+                    <p className="text-sm">{watchData.condition}</p>
+                  </div>
+                </div>
+              </Card>
+
+              <Card className="p-6 border border-border">
+                <h3 className="font-display text-lg mb-4">Description</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  {watchData.description}
+                </p>
+              </Card>
+
+              <Card className="p-6 border border-border">
+                <h3 className="font-display text-lg mb-4">What&apos;s Included</h3>
+                <ul className="space-y-2">
+                  <li className="text-sm flex items-center gap-2">
+                    <span className="w-2 h-2 bg-primary rounded-full" />
+                    Original Box
+                  </li>
+                  <li className="text-sm flex items-center gap-2">
+                    <span className="w-2 h-2 bg-primary rounded-full" />
+                    Original Papers
+                  </li>
+                  <li className="text-sm flex items-center gap-2">
+                    <span className="w-2 h-2 bg-primary rounded-full" />
+                    Warranty Card
+                  </li>
+                  <li className="text-sm flex items-center gap-2">
+                    <span className="w-2 h-2 bg-primary rounded-full" />
+                    Service History
+                  </li>
+                </ul>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="condition" className="space-y-6 mt-6">
+              <Card className="p-6 border border-border">
+                <h3 className="font-display text-lg mb-4">Condition Report</h3>
+                <div className="space-y-4">
+                  <div>
+                    <p className="text-sm font-semibold mb-2">Case</p>
+                    <p className="text-xs text-muted-foreground">
+                      Minor scratches consistent with regular wear
+                    </p>
+                  </div>
+                  <Separator />
+                  <div>
+                    <p className="text-sm font-semibold mb-2">Crystal</p>
+                    <p className="text-xs text-muted-foreground">
+                      Clean, no scratches or cracks
+                    </p>
+                  </div>
+                  <Separator />
+                  <div>
+                    <p className="text-sm font-semibold mb-2">Dial & Hands</p>
+                    <p className="text-xs text-muted-foreground">
+                      Perfect condition, no fading
+                    </p>
+                  </div>
+                  <Separator />
+                  <div>
+                    <p className="text-sm font-semibold mb-2">Bracelet</p>
+                    <p className="text-xs text-muted-foreground">
+                      Light scratches on links, properly sized
+                    </p>
+                  </div>
+                </div>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="seller" className="space-y-6 mt-6">
+              <Card className="p-6 border border-border">
+                <h3 className="font-display text-lg mb-4">Seller Information</h3>
+                <div className="space-y-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center">
+                      <p className="text-xs font-semibold">MW</p>
+                    </div>
+                    <div>
+                      <p className="font-semibold">{watchData.seller}</p>
+                      <div className="flex items-center gap-1">
+                        <ShieldIcon size={14} className="text-green-600" />
+                        <p className="text-xs text-green-600">Verified Dealer</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <Separator />
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <p className="text-[10px] uppercase text-muted-foreground mb-1">
+                        Member Since
+                      </p>
+                      <p className="text-sm">2018</p>
+                    </div>
+                    <div>
+                      <p className="text-[10px] uppercase text-muted-foreground mb-1">
+                        Total Sales
+                      </p>
+                      <p className="text-sm">245 watches</p>
+                    </div>
+                  </div>
+
+                  <Separator />
+
+                  <Button className="w-full">Contact Seller</Button>
+                </div>
+              </Card>
+            </TabsContent>
+          </Tabs>
+        </div>
+
+        <div className="space-y-6">
+          <Card className="p-6 border border-border space-y-6">
+            <div>
+              <p className="text-[10px] uppercase text-primary/50 mb-2">
+                {watchData.brand}
+              </p>
+              <h1 className="font-display text-2xl">{watchData.model}</h1>
+            </div>
+
+            <div>
+              <h2 className="font-display text-4xl mb-2">{watchData.price}</h2>
+              <div className="flex gap-2 flex-wrap">
+                <Badge className="bg-green-900/20 border-green-800 text-green-800">
+                  {watchData.trend}
+                </Badge>
+                <Badge variant="secondary">{watchData.condition}</Badge>
+              </div>
+            </div>
+
+            <Separator />
+
+            <div className="space-y-3 flex-1">
+              <Button size="lg" className="w-full">
+                Make Offer
+              </Button>
+              <Button
+                size="lg"
+                variant="outline"
+                className="w-full"
+                onClick={() => setIsWishlisted(!isWishlisted)}
+              >
+                <HeartIcon size={16} className="mr-2" />
+                {isWishlisted ? "Remove from Wishlist" : "Add to Wishlist"}
+              </Button>
+              <Button size="lg" variant="outline" className="w-full">
+                <ShareNetworkIcon size={16} className="mr-2" />
+                Share
+              </Button>
+            </div>
+
+            <Separator />
+
+            <div className="space-y-3 text-xs">
+              <p>
+                <span className="text-muted-foreground">Location:</span>{" "}
+                {watchData.location}
+              </p>
+              <p>
+                <span className="text-muted-foreground">Views:</span>{" "}
+                {watchData.views}
+              </p>
+              <p className="text-muted-foreground">
+                All PATINA watches come with authenticity verified status
+              </p>
+            </div>
+          </Card>
+        </div>
+      </div>
+    </div>
+  );
+}

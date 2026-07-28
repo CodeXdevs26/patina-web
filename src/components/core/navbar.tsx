@@ -8,11 +8,11 @@ export default function Navbar() {
   const navs = [
     {
       label: "Browse",
-      href: "#browse",
+      href: "/browse",
     },
     {
       label: "Price index",
-      href: "#price-index",
+      href: "/browse",
     },
     {
       label: "Finance",
@@ -20,20 +20,22 @@ export default function Navbar() {
     },
     {
       label: "Dealers",
-      href: "#dealers",
+      href: "/dealers",
     },
   ];
   return (
     <>
       <div className="h-16 border-b flex justify-between px-12 items-center fixed top-0 left-0 right-0 z-50 bg-background">
         <div className="flex justify-between items-center">
-          <div
-            className={cn(
-              `text-2xl tracking-[0.3rem] text-muted-foreground shimmer font-display`,
-            )}
-          >
-            PATINA
-          </div>
+          <Link href="/">
+            <div
+              className={cn(
+                `text-2xl tracking-[0.3rem] text-muted-foreground shimmer font-display`,
+              )}
+            >
+              PATINA
+            </div>
+          </Link>
           <div className="flex space-x-2 ml-8">
             {navs.map((nav) => (
               <Button
@@ -54,7 +56,9 @@ export default function Navbar() {
           >
             Sell a watch
           </Button>
-          <Button variant="outline">Sign In</Button>
+          <Button variant="outline" asChild>
+            <Link href="/auth/login">Sign In</Link>
+          </Button>
           <Button>Get the App</Button>
         </div>
       </div>

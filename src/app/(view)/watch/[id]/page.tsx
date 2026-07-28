@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -9,14 +8,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
 import {
   ShieldIcon,
-  HeartIcon,
   ShareNetworkIcon,
   ArrowLeftIcon,
-} from "@phosphor-icons/react/dist/ssr";
+} from "@phosphor-icons/react";
+import Image from "next/image";
 
 export default function WatchDetailsPage() {
-  const [isWishlisted, setIsWishlisted] = useState(false);
-
   const watchData = {
     brand: "Rolex",
     model: "Submariner Date 126610LN",
@@ -46,10 +43,16 @@ export default function WatchDetailsPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 p-12 max-w-6xl mx-auto">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 p-12 container mx-auto">
         <div className="lg:col-span-2 space-y-8">
-          <div className="bg-muted/30 aspect-square rounded-lg flex items-center justify-center">
-            <p className="text-muted-foreground">[Watch Image]</p>
+          <div className="bg-muted/30 aspect-video rounded-lg flex items-center justify-center">
+            <Image
+              src="/watch.webp"
+              alt="Watch"
+              width={800}
+              height={600}
+              className="object-contain h-full w-full"
+            />
           </div>
 
           <Tabs defaultValue="details" className="w-full">
@@ -110,7 +113,9 @@ export default function WatchDetailsPage() {
               </Card>
 
               <Card className="p-6 border border-border">
-                <h3 className="font-display text-lg mb-4">What&apos;s Included</h3>
+                <h3 className="font-display text-lg mb-4">
+                  What&apos;s Included
+                </h3>
                 <ul className="space-y-2">
                   <li className="text-sm flex items-center gap-2">
                     <span className="w-2 h-2 bg-primary rounded-full" />
@@ -169,7 +174,9 @@ export default function WatchDetailsPage() {
 
             <TabsContent value="seller" className="space-y-6 mt-6">
               <Card className="p-6 border border-border">
-                <h3 className="font-display text-lg mb-4">Seller Information</h3>
+                <h3 className="font-display text-lg mb-4">
+                  Seller Information
+                </h3>
                 <div className="space-y-4">
                   <div className="flex items-center gap-3">
                     <div className="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center">
@@ -179,7 +186,9 @@ export default function WatchDetailsPage() {
                       <p className="font-semibold">{watchData.seller}</p>
                       <div className="flex items-center gap-1">
                         <ShieldIcon size={14} className="text-green-600" />
-                        <p className="text-xs text-green-600">Verified Dealer</p>
+                        <p className="text-xs text-green-600">
+                          Verified Dealer
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -235,7 +244,7 @@ export default function WatchDetailsPage() {
               <Button size="lg" className="w-full">
                 Make Offer
               </Button>
-              <Button
+              {/* <Button
                 size="lg"
                 variant="outline"
                 className="w-full"
@@ -243,7 +252,7 @@ export default function WatchDetailsPage() {
               >
                 <HeartIcon size={16} className="mr-2" />
                 {isWishlisted ? "Remove from Wishlist" : "Add to Wishlist"}
-              </Button>
+              </Button> */}
               <Button size="lg" variant="outline" className="w-full">
                 <ShareNetworkIcon size={16} className="mr-2" />
                 Share

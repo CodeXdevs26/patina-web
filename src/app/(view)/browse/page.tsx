@@ -13,7 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { HeartIcon } from "@phosphor-icons/react/dist/ssr";
+import Image from "next/image";
 
 const mockWatches = [
   {
@@ -76,6 +76,26 @@ const mockWatches = [
     condition: "Good",
     location: "Delhi NCR",
   },
+  {
+    id: 7,
+    brand: "Breitling",
+    model: "Avenger Chronograph",
+    year: "2018",
+    price: "₹8,25,000",
+    trend: "+7%",
+    condition: "Good",
+    location: "Delhi NCR",
+  },
+  {
+    id: 8,
+    brand: "Breitling",
+    model: "Avenger Chronograph",
+    year: "2018",
+    price: "₹8,25,000",
+    trend: "+7%",
+    condition: "Good",
+    location: "Delhi NCR",
+  },
 ];
 
 export default function BrowsePage() {
@@ -87,19 +107,11 @@ export default function BrowsePage() {
   const filteredWatches = mockWatches.filter(
     (watch) =>
       watch.brand.toLowerCase().includes(search.toLowerCase()) ||
-      watch.model.toLowerCase().includes(search.toLowerCase())
+      watch.model.toLowerCase().includes(search.toLowerCase()),
   );
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="border-b sticky top-0 z-40 bg-background">
-        <div className="h-16 flex items-center px-12">
-          <h1 className="text-2xl font-display tracking-[0.3rem] text-muted-foreground">
-            PATINA
-          </h1>
-        </div>
-      </div>
-
       <div className="p-12 space-y-8">
         <div>
           <p className="text-[10px] uppercase text-primary/50 tracking-[0.2rem]">
@@ -121,7 +133,7 @@ export default function BrowsePage() {
             />
 
             <Select value={sortBy} onValueChange={setSortBy}>
-              <SelectTrigger>
+              <SelectTrigger className="w-full">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -133,7 +145,7 @@ export default function BrowsePage() {
             </Select>
 
             <Select value={condition} onValueChange={setCondition}>
-              <SelectTrigger>
+              <SelectTrigger className="w-full">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -145,7 +157,7 @@ export default function BrowsePage() {
             </Select>
 
             <Select value={priceRange} onValueChange={setPriceRange}>
-              <SelectTrigger>
+              <SelectTrigger className="w-full">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -164,18 +176,20 @@ export default function BrowsePage() {
             Showing {filteredWatches.length} watches
           </p>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3  xl:grid-cols-4 divide-x! divide-y!">
             {filteredWatches.map((watch) => (
               <Card
                 key={watch.id}
-                className="border border-border hover:bg-muted/50 transition-colors overflow-hidden flex flex-col"
+                className="border-0 ring-0! border-border hover:bg-muted/50 transition-colors overflow-hidden flex flex-col pt-0! last-of-type:border-b"
               >
                 <div className="bg-muted/30 h-48 flex items-center justify-center">
-                  <div className="text-center">
-                    <p className="text-xs text-muted-foreground/50">
-                      [Watch Image]
-                    </p>
-                  </div>
+                  <Image
+                    src="/rolex.webp"
+                    alt="Watch"
+                    height={100}
+                    width={140}
+                    className="object-contain h-full p-6"
+                  />
                 </div>
 
                 <div className="p-6 flex flex-col flex-1">
@@ -186,19 +200,28 @@ export default function BrowsePage() {
                       </p>
                       <h3 className="font-display text-lg">{watch.model}</h3>
                     </div>
-                    <Button variant="ghost" size="sm">
+                    {/* <Button variant="ghost" size="sm">
                       <HeartIcon size={16} />
-                    </Button>
+                    </Button> */}
                   </div>
 
                   <div className="flex gap-2 flex-wrap mb-4">
-                    <Badge variant="secondary" className="text-[10px]">
+                    <Badge
+                      variant="secondary"
+                      className="text-[10px] text-white"
+                    >
                       {watch.year}
                     </Badge>
-                    <Badge variant="secondary" className="text-[10px]">
+                    <Badge
+                      variant="secondary"
+                      className="text-[10px] text-white"
+                    >
                       {watch.condition}
                     </Badge>
-                    <Badge variant="secondary" className="text-[10px]">
+                    <Badge
+                      variant="secondary"
+                      className="text-[10px] text-white"
+                    >
                       {watch.location}
                     </Badge>
                   </div>

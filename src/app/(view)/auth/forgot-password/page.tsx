@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { CheckCircledIcon } from "@phosphor-icons/react/dist/ssr";
+import { CheckCircleIcon } from "@phosphor-icons/react/dist/ssr";
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
@@ -38,7 +38,7 @@ export default function ForgotPasswordPage() {
         <div className="w-full max-w-md space-y-8">
           <div className="text-center space-y-4">
             <div className="flex justify-center">
-              <CheckCircledIcon size={64} className="text-green-600" />
+              <CheckCircleIcon size={64} className="text-green-600" />
             </div>
             <h1 className="text-4xl font-display">Check Your Email</h1>
             <p className="text-sm text-muted-foreground">
@@ -49,8 +49,8 @@ export default function ForgotPasswordPage() {
 
           <Alert className="bg-muted/50 border-border">
             <AlertDescription className="text-xs">
-              If you don&apos;t see the email within a few minutes, check your spam
-              folder or try requesting another reset.
+              If you don&apos;t see the email within a few minutes, check your
+              spam folder or try requesting another reset.
             </AlertDescription>
           </Alert>
 

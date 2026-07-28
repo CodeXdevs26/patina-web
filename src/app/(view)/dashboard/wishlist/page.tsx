@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { HeartFilledIcon, ArrowLeftIcon } from "@phosphor-icons/react/dist/ssr";
+import { HeartIcon, ArrowLeftIcon } from "@phosphor-icons/react/dist/ssr";
 
 const initialWishlist = [
   {
@@ -75,8 +75,13 @@ export default function WishlistPage() {
 
         {wishlist.length === 0 ? (
           <Card className="p-12 text-center border border-border">
-            <HeartFilledIcon size={48} className="mx-auto mb-4 text-muted-foreground/50" />
-            <h3 className="font-display text-2xl mb-2">Your wishlist is empty</h3>
+            <HeartIcon
+              size={48}
+              className="mx-auto mb-4 text-muted-foreground/50"
+            />
+            <h3 className="font-display text-2xl mb-2">
+              Your wishlist is empty
+            </h3>
             <p className="text-sm text-muted-foreground mb-6">
               Start exploring watches and add them to your wishlist
             </p>
@@ -103,7 +108,7 @@ export default function WishlistPage() {
                     size="sm"
                     onClick={() => removeFromWishlist(watch.id)}
                   >
-                    <HeartFilledIcon size={18} className="text-destructive" />
+                    <HeartIcon size={18} className="text-destructive" />
                   </Button>
                 </div>
 

@@ -110,8 +110,8 @@ export default function LoginPage() {
             </Label>
           </div>
 
-          <Button type="submit" size="lg" className="w-full">
-            Sign In
+          <Button type="submit" size="lg" className="w-full" asChild>
+            <Link href="/dashboard">Sign In</Link>
           </Button>
         </form>
 

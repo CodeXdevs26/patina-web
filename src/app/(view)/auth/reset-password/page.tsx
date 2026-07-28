@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { CheckCircledIcon } from "@phosphor-icons/react/dist/ssr";
+import { CheckCircleIcon } from "@phosphor-icons/react/dist/ssr";
 
 export default function ResetPasswordPage() {
   const [password, setPassword] = useState("");
@@ -47,12 +47,12 @@ export default function ResetPasswordPage() {
         <div className="w-full max-w-md space-y-8">
           <div className="text-center space-y-4">
             <div className="flex justify-center">
-              <CheckCircledIcon size={64} className="text-green-600" />
+              <CheckCircleIcon size={64} className="text-green-600" />
             </div>
             <h1 className="text-4xl font-display">Password Reset</h1>
             <p className="text-sm text-muted-foreground">
-              Your password has been successfully reset. You can now sign in with
-              your new password.
+              Your password has been successfully reset. You can now sign in
+              with your new password.
             </p>
           </div>
 
@@ -79,7 +79,10 @@ export default function ResetPasswordPage() {
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-2">
-            <Label htmlFor="password" className="text-xs uppercase tracking-wider">
+            <Label
+              htmlFor="password"
+              className="text-xs uppercase tracking-wider"
+            >
               New Password
             </Label>
             <Input
@@ -111,7 +114,9 @@ export default function ResetPasswordPage() {
               className={errors.confirmPassword ? "border-destructive" : ""}
             />
             {errors.confirmPassword && (
-              <p className="text-xs text-destructive">{errors.confirmPassword}</p>
+              <p className="text-xs text-destructive">
+                {errors.confirmPassword}
+              </p>
             )}
           </div>
 

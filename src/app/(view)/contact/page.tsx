@@ -15,7 +15,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
-  MailIcon,
+  EnvelopeIcon,
   PhoneIcon,
   MapPinIcon,
   ArrowLeftIcon,
@@ -31,7 +31,7 @@ export default function ContactPage() {
   const [submitted, setSubmitted] = useState(false);
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -74,7 +74,7 @@ export default function ContactPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="space-y-6">
             <Card className="p-6 border border-border">
-              <MailIcon size={24} className="mb-4 text-primary" />
+              <EnvelopeIcon size={24} className="mb-4 text-primary" />
               <h3 className="font-display text-lg mb-2">Email</h3>
               <p className="text-sm text-muted-foreground mb-2">
                 support@patina.in
@@ -113,7 +113,10 @@ export default function ContactPage() {
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="name" className="text-xs uppercase tracking-wider">
+                    <Label
+                      htmlFor="name"
+                      className="text-xs uppercase tracking-wider"
+                    >
                       Full Name
                     </Label>
                     <Input
@@ -126,7 +129,10 @@ export default function ContactPage() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="email" className="text-xs uppercase tracking-wider">
+                    <Label
+                      htmlFor="email"
+                      className="text-xs uppercase tracking-wider"
+                    >
                       Email
                     </Label>
                     <Input
@@ -142,19 +148,29 @@ export default function ContactPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="subject" className="text-xs uppercase tracking-wider">
+                  <Label
+                    htmlFor="subject"
+                    className="text-xs uppercase tracking-wider"
+                  >
                     Subject
                   </Label>
-                  <Select value={formData.subject} onValueChange={(value) =>
-                    setFormData((prev) => ({ ...prev, subject: value }))
-                  }>
+                  <Select
+                    value={formData.subject}
+                    onValueChange={(value) =>
+                      setFormData((prev) => ({ ...prev, subject: value }))
+                    }
+                  >
                     <SelectTrigger id="subject">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="general">General Inquiry</SelectItem>
-                      <SelectItem value="authentication">Authentication Help</SelectItem>
-                      <SelectItem value="shipping">Shipping & Delivery</SelectItem>
+                      <SelectItem value="authentication">
+                        Authentication Help
+                      </SelectItem>
+                      <SelectItem value="shipping">
+                        Shipping & Delivery
+                      </SelectItem>
                       <SelectItem value="listing">Listing Help</SelectItem>
                       <SelectItem value="bug">Report a Bug</SelectItem>
                       <SelectItem value="other">Other</SelectItem>
@@ -163,7 +179,10 @@ export default function ContactPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="message" className="text-xs uppercase tracking-wider">
+                  <Label
+                    htmlFor="message"
+                    className="text-xs uppercase tracking-wider"
+                  >
                     Message
                   </Label>
                   <Textarea

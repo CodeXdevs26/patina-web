@@ -8,8 +8,8 @@ import { Badge } from "@/components/ui/badge";
 import {
   HeartIcon,
   ShoppingBagIcon,
-  TrendingUpIcon,
-  SettingsIcon,
+  TrendUpIcon,
+  GearIcon as CogIcon,
   SignOutIcon,
 } from "@phosphor-icons/react/dist/ssr";
 
@@ -73,6 +73,7 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 p-12">
         {mockStats.map((stat, i) => (
           <Card
+            // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
             key={i}
             className="p-6 border border-border bg-card hover:bg-muted/50 transition-colors"
           >
@@ -153,13 +154,13 @@ export default function DashboardPage() {
             </Button>
             <Button asChild variant="outline" className="w-full justify-start">
               <Link href="/dashboard/history">
-                <TrendingUpIcon size={16} className="mr-2" />
+                <TrendUpIcon size={16} className="mr-2" />
                 Purchase History
               </Link>
             </Button>
             <Button asChild variant="outline" className="w-full justify-start">
               <Link href="/dashboard/profile">
-                <SettingsIcon size={16} className="mr-2" />
+                <CogIcon size={16} className="mr-2" />
                 Settings
               </Link>
             </Button>

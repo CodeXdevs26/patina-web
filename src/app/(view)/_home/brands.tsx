@@ -35,7 +35,6 @@ export default function Brands() {
               <h5 className="text-xl font-display">
                 {index === 5 ? "More" : "Rolex"}
               </h5>
-              {/*  */}
 
               <p className="text-sm text-muted-foreground font-light">
                 115 listing

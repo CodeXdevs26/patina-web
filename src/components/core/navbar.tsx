@@ -12,11 +12,7 @@ export default function Navbar() {
     },
     {
       label: "Price index",
-      href: "/browse",
-    },
-    {
-      label: "Finance",
-      href: "#finance",
+      href: "/index",
     },
     {
       label: "Dealers",
@@ -50,12 +46,12 @@ export default function Navbar() {
           </div>
         </div>
         <div className="flex items-center space-x-4">
-          <Button
+          {/* <Button
             variant="ghost"
             className="text-muted-foreground/80 uppercase text-[10px] bg-transparent! hover:text-primary"
           >
             Sell a watch
-          </Button>
+          </Button> */}
           <Button variant="outline" asChild>
             <Link href="/auth/login">Sign In</Link>
           </Button>

@@ -14,6 +14,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import Image from "next/image";
+import { Slider } from "@/components/ui/slider";
 
 const mockWatches = [
   {
@@ -101,7 +102,7 @@ const mockWatches = [
 export default function BrowsePage() {
   const [search, setSearch] = useState("");
   const [sortBy, setSortBy] = useState("newest");
-  const [priceRange, setPriceRange] = useState("all");
+  const [priceRange, setPriceRange] = useState<number[]>([0, 100000]);
   const [condition, setCondition] = useState("all");
 
   const filteredWatches = mockWatches.filter(
@@ -125,7 +126,7 @@ export default function BrowsePage() {
             <h3 className="font-display text-lg mb-4">Search & Filter</h3>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 items-center">
             <Input
               placeholder="Search by brand or model"
               value={search}
@@ -156,18 +157,25 @@ export default function BrowsePage() {
               </SelectContent>
             </Select>
 
-            <Select value={priceRange} onValueChange={setPriceRange}>
-              <SelectTrigger className="w-full">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Prices</SelectItem>
-                <SelectItem value="0-2">₹0 - ₹2L</SelectItem>
-                <SelectItem value="2-5">₹2L - ₹5L</SelectItem>
-                <SelectItem value="5-10">₹5L - ₹10L</SelectItem>
-                <SelectItem value="10+">₹10L+</SelectItem>
-              </SelectContent>
-            </Select>
+            <div className="flex items-center gap-4">
+              <span className="whitespace-nowrap">Price range:</span>
+              <Slider
+                defaultValue={[0, 100000]}
+                max={100000}
+                step={100}
+                className=""
+                onValueChange={(value) => setPriceRange(value as number[])}
+                value={priceRange}
+              />
+              <div className="p-2 space-y-2 space-x-2">
+                <div className="whitespace-nowrap">
+                  Min: ₹{priceRange[0] ?? 0}
+                </div>
+                <div className="whitespace-nowrap">
+                  Max: ₹{priceRange[1] ?? 0}
+                </div>
+              </div>
+            </div>
           </div>
         </Card>
 

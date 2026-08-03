@@ -52,84 +52,9 @@ const mockWatches = [
 
 export default function DashboardPage() {
   return (
-    <div className="min-h-screen bg-background">
-      <div className="border-b sticky top-0 z-40 bg-background">
-        <div className="h-16 flex justify-between items-center px-12">
-          <h1 className="text-2xl font-display tracking-[0.3rem] text-muted-foreground">
-            PATINA
-          </h1>
-          <div className="flex items-center gap-4">
-            <Button variant="ghost" size="sm" asChild>
-              <Link href="/dashboard/profile">Profile</Link>
-            </Button>
-            <Button variant="outline" size="sm">
-              <SignOutIcon size={16} className="mr-2" />
-              Sign Out
-            </Button>
-          </div>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 p-12">
-        {mockStats.map((stat, i) => (
-          <Card
-            // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
-            key={i}
-            className="p-6 border border-border bg-card hover:bg-muted/50 transition-colors"
-          >
-            <p className="text-[10px] uppercase text-muted-foreground tracking-wider">
-              {stat.label}
-            </p>
-            <h3 className="text-3xl font-display my-2">{stat.value}</h3>
-            <p className="text-xs text-green-600">{stat.change}</p>
-          </Card>
-        ))}
-      </div>
-
+    <div className="min-h-screen bg-background pt-12">
       <div className="px-12 pb-12 grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-2 space-y-6">
-          <div className="flex justify-between items-center">
-            <div>
-              <p className="text-[10px] uppercase text-primary/50 tracking-[0.2rem]">
-                Your Collection
-              </p>
-              <h2 className="text-3xl font-display">My Watches</h2>
-            </div>
-            <Button asChild>
-              <Link href="/dashboard/listings">Manage Listings</Link>
-            </Button>
-          </div>
-
-          <div className="space-y-3">
-            {mockWatches.map((watch) => (
-              <Card
-                key={watch.id}
-                className="p-6 border border-border flex items-center justify-between hover:bg-muted/50 transition-colors"
-              >
-                <div className="flex-1">
-                  <div className="flex items-center gap-3 mb-2">
-                    <p className="text-[10px] uppercase text-primary/50">
-                      {watch.brand}
-                    </p>
-                    <Badge variant="secondary" className="text-[10px]">
-                      {watch.year}
-                    </Badge>
-                    {watch.status === "Listed" && (
-                      <Badge className="text-[10px] bg-green-900/20 border-green-800 text-green-800">
-                        Listed
-                      </Badge>
-                    )}
-                  </div>
-                  <h3 className="font-display text-lg">{watch.model}</h3>
-                </div>
-                <div className="text-right">
-                  <h4 className="font-display text-2xl">{watch.price}</h4>
-                  <p className="text-sm text-green-600">{watch.trend}</p>
-                </div>
-              </Card>
-            ))}
-          </div>
-        </div>
+        <div className="lg:col-span-2 space-y-6"></div>
 
         <div className="space-y-6">
           <div>
@@ -140,12 +65,6 @@ export default function DashboardPage() {
           </div>
 
           <div className="space-y-3">
-            <Button asChild variant="outline" className="w-full justify-start">
-              <Link href="/dashboard/wishlist">
-                <HeartIcon size={16} className="mr-2" />
-                Wishlist
-              </Link>
-            </Button>
             <Button asChild variant="outline" className="w-full justify-start">
               <Link href="/browse">
                 <ShoppingBagIcon size={16} className="mr-2" />

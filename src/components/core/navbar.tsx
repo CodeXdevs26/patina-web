@@ -12,7 +12,7 @@ export default function Navbar() {
     },
     {
       label: "Price index",
-      href: "/index",
+      href: "/pricing",
     },
     {
       label: "Dealers",

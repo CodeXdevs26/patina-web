@@ -1,14 +1,6 @@
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
-import Image from "next/image";
-import React from "react";
 import Header from "./_home/header";
 import Marquee from "react-fast-marquee";
-import {
-  DotsThreeOutlineIcon,
-  ShieldIcon,
-} from "@phosphor-icons/react/dist/ssr";
+
 import Brands from "./_home/brands";
 import Arrival from "./_home/arrival";
 import Market from "./_home/market";

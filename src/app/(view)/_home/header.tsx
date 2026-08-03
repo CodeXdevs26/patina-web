@@ -5,7 +5,7 @@ import { Separator } from "@/components/ui/separator";
 import Image from "next/image";
 export default function Header() {
   return (
-    <header className="h-[calc(100vh-4rem)] divide-x w-full border-b grid grid-cols-2">
+    <header className="lg:h-[calc(100vh-4rem)] divide-x w-full border-b grid lg:grid-cols-2 gap-12 lg:gap-0 mt-12">
       <div className="h-full flex flex-col justify-center items-center">
         <div className="w-full px-[6%] space-y-6">
           <p className="text-[8px] tracking-[0.2rem] text-primary flex gap-4 items-center uppercase">
@@ -65,7 +65,14 @@ export default function Header() {
               width={400}
               className="absolute top-0 right-0 h-full object-cover object-left"
             /> */}
-          <div className="h-full w-full flex flex-col justify-between items-start">
+          <div className="h-full w-full flex flex-col justify-between items-start relative">
+            <Image
+              src="/watch.webp"
+              alt="Watch"
+              width={400}
+              height={400}
+              className="absolute top-0 right-0 h-full object-cover object-left mix-blend-screen"
+            />
             <p className="text-[10px] uppercase text-primary/50">
               Featured — Verified · Undervalued
             </p>

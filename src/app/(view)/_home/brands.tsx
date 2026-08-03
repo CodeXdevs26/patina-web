@@ -12,12 +12,12 @@ export default function Brands() {
         <h2 className="text-4xl font-display">Browse by Brand</h2>
       </div>
 
-      <div className="w-full grid grid-cols-6 mt-12 ">
+      <div className="w-full grid grid-cols-3 lg:grid-cols-6 mt-12 gap-6 lg:gap-0 ">
         {Array(6)
           .fill("")
           .map((_, index) => (
             <div
-              className="aspect-square flex flex-col justify-center items-center gap-4 border border-transparent hover:border-primary/20 hover:bg-primary/5 active:bg-primary/10 transition-all duration-300 cursor-pointer"
+              className="lg:aspect-square flex flex-col justify-center items-center gap-4 border border-transparent hover:border-primary/20 hover:bg-primary/5 active:bg-primary/10 transition-all duration-300 cursor-pointer"
               // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
               key={index}
             >

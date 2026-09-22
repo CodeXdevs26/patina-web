@@ -6,6 +6,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
+import { useMutation } from "@tanstack/react-query";
+import { howl } from "@/lib/utils";
+import { toast } from "sonner";
+import { useCookies } from "react-cookie";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -15,6 +19,66 @@ export default function LoginPage() {
     email?: string;
     password?: string;
   }>({});
+  const [{ token }, setCookie] = useCookies(["token"]);
+
+  const { mutate, isPending } = useMutation({
+    mutationKey: ["login"],
+    mutationFn: (): Promise<{
+      ok: boolean;
+      message: string;
+      data: {
+        access_token: string;
+        token_type: string;
+        user: {
+          id: number;
+          name: string;
+          email: string;
+          email_verified_at: string;
+          phone_number: any;
+          company_name: any;
+          razorpay_account_id: any;
+          kyc_status: string;
+          kyc_rejection_reason: any;
+          account_standing: string;
+          average_rating: string;
+          total_reviews: number;
+          avatar: string;
+          created_at: string;
+          updated_at: string;
+          roles: Array<{
+            id: number;
+            name: string;
+            guard_name: string;
+            created_at: string;
+            updated_at: string;
+            pivot: {
+              model_type: string;
+              model_id: number;
+              role_id: number;
+            };
+          }>;
+          permissions: Array<any>;
+        };
+      };
+    }> => {
+      return howl(`/auth/login`, {
+        method: "POST",
+        body: { email, password },
+      });
+    },
+    onError: (err) => {
+      toast.error(err.message ?? "Failed to complete this request");
+    },
+    onSuccess: (res) => {
+      toast.success(res.message ?? "Success!");
+      try {
+        setCookie("token", res.data.access_token, { path: "/" });
+      } catch (e) {
+      } finally {
+        window.location.href = "/";
+      }
+    },
+  });
 
   const validateForm = () => {
     const newErrors: typeof errors = {};
@@ -36,7 +100,7 @@ export default function LoginPage() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (validateForm()) {
-      console.log("Login submitted:", { email, rememberMe });
+      mutate();
     }
   };
 
@@ -110,8 +174,14 @@ export default function LoginPage() {
             </Label>
           </div>
 
-          <Button type="submit" size="lg" className="w-full" asChild>
-            <Link href="/dashboard">Sign In</Link>
+          <Button
+            type="submit"
+            size="lg"
+            className="w-full"
+            disabled={isPending}
+            onClick={handleSubmit}
+          >
+            Sign In
           </Button>
         </form>
 

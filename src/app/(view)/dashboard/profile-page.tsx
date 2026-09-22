@@ -22,11 +22,43 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-export default function ProfilePage() {
-  const [firstName, setFirstName] = useState("Rajesh");
-  const [lastName, setLastName] = useState("Kumar");
-  const [email, setEmail] = useState("rajesh.kumar@example.com");
-  const [phone, setPhone] = useState("+91 98765 43210");
+export default function ProfilePage({
+  data,
+}: {
+  data?: {
+    id: number;
+    name: string;
+    email: string;
+    email_verified_at: string;
+    phone_number: any;
+    company_name: any;
+    razorpay_account_id: any;
+    kyc_status: string;
+    kyc_rejection_reason: any;
+    account_standing: string;
+    average_rating: string;
+    total_reviews: number;
+    avatar: string;
+    created_at: string;
+    updated_at: string;
+    roles: Array<{
+      id: number;
+      name: string;
+      guard_name: string;
+      created_at: string;
+      updated_at: string;
+      pivot: {
+        model_type: string;
+        model_id: number;
+        role_id: number;
+      };
+    }>;
+    permissions: Array<string>;
+  };
+}) {
+  const [fullName, setFullName] = useState(data?.name ?? "");
+  const [email, setEmail] = useState(data?.email ?? "");
+  const [phone, setPhone] = useState(data?.phone_number ?? "");
   const [city, setCity] = useState("Delhi");
   const [state, setState] = useState("Delhi");
   const [status, setStatus] = useState("");
@@ -37,8 +69,7 @@ export default function ProfilePage() {
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
     console.log("Profile updated:", {
-      firstName,
-      lastName,
+      name: fullName,
       email,
       phone,
       city,
@@ -60,24 +91,14 @@ export default function ProfilePage() {
       <Card className="p-8 border border-border space-y-6">
         <form onSubmit={handleSave} className="space-y-6">
           <div className="grid grid-cols-2 gap-6">
-            <div className="space-y-2">
+            <div className="space-y-2 col-span-2">
               <Label className="text-xs uppercase tracking-wider">
-                First Name
+                Full Name
               </Label>
               <Input
-                value={firstName}
-                onChange={(e) => setFirstName(e.target.value)}
-                placeholder="First name"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label className="text-xs uppercase tracking-wider">
-                Last Name
-              </Label>
-              <Input
-                value={lastName}
-                onChange={(e) => setLastName(e.target.value)}
-                placeholder="Last name"
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                placeholder="Full name"
               />
             </div>
           </div>
@@ -122,7 +143,7 @@ export default function ProfilePage() {
                   State
                 </Label>
                 <Select value={state} onValueChange={setState}>
-                  <SelectTrigger>
+                  <SelectTrigger className="w-full">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -188,9 +209,9 @@ export default function ProfilePage() {
             </DialogFooter>
           </DialogContent>
         </Dialog>
-        <Button variant="outline" className="w-full justify-start" asChild>
+        {/* <Button variant="outline" className="w-full justify-start" asChild>
           <Link href="/auth/login">Sign In on Another Device</Link>
-        </Button>
+        </Button> */}
       </Card>
     </div>
   );

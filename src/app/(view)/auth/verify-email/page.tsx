@@ -6,11 +6,34 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { CheckCircleIcon } from "@phosphor-icons/react/dist/ssr";
+import { useMutation } from "@tanstack/react-query";
+import { howl } from "@/lib/utils";
+import { toast } from "sonner";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export default function VerifyEmailPage() {
   const [codes, setCodes] = useState(["", "", "", "", "", ""]);
   const [verified, setVerified] = useState(false);
   const [timeLeft, setTimeLeft] = useState(300); // 5 minutes
+  const searchParams = useSearchParams();
+  const email = searchParams.get("email") || "";
+  const navig = useRouter();
+  const { mutate, isPending } = useMutation({
+    mutationKey: ["verify-email"],
+    mutationFn: () => {
+      return howl(`/auth/verify`, {
+        method: "POST",
+        body: { email, otp: codes.join("") },
+      });
+    },
+    onError: (err) => {
+      toast.error(err.message ?? "Failed to complete this request");
+    },
+    onSuccess: (res: any) => {
+      toast.success(res.message ?? "Success!");
+      navig.push("/auth/login");
+    },
+  });
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -93,6 +116,7 @@ export default function VerifyEmailPage() {
             <div className="flex gap-2 justify-center">
               {codes.map((code, index) => (
                 <Input
+                  // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
                   key={index}
                   id={`code-${index}`}
                   type="text"
@@ -123,7 +147,8 @@ export default function VerifyEmailPage() {
             type="submit"
             size="lg"
             className="w-full"
-            disabled={codes.join("").length !== 6}
+            disabled={codes.join("").length !== 6 || isPending}
+            onClick={() => mutate()}
           >
             Verify Email
           </Button>

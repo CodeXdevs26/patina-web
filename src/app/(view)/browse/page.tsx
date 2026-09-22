@@ -15,6 +15,9 @@ import {
 } from "@/components/ui/select";
 import Image from "next/image";
 import { Slider } from "@/components/ui/slider";
+import { useQuery } from "@tanstack/react-query";
+import { howl } from "@/lib/utils";
+import { useCookies } from "react-cookie";
 
 const mockWatches = [
   {
@@ -104,12 +107,20 @@ export default function BrowsePage() {
   const [sortBy, setSortBy] = useState("newest");
   const [priceRange, setPriceRange] = useState<number[]>([0, 100000]);
   const [condition, setCondition] = useState("all");
+  const [{ token }] = useCookies(["token"]);
 
   const filteredWatches = mockWatches.filter(
     (watch) =>
       watch.brand.toLowerCase().includes(search.toLowerCase()) ||
       watch.model.toLowerCase().includes(search.toLowerCase()),
   );
+
+  const { data, isPending } = useQuery({
+    queryKey: ["listing"],
+    queryFn: async () => {
+      return howl("/listings", { token });
+    },
+  });
 
   return (
     <div className="min-h-screen bg-background">

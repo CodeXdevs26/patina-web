@@ -6,18 +6,47 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
+import { useMutation } from "@tanstack/react-query";
+import { howl } from "@/lib/utils";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 export default function SignUpPage() {
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [errors, setErrors] = useState<{
+    name?: string;
     email?: string;
     password?: string;
     confirmPassword?: string;
     terms?: string;
   }>({});
+  const navig = useRouter();
+
+  const { mutate, isPending } = useMutation({
+    mutationKey: ["register"],
+    mutationFn: () => {
+      return howl(`/auth/register`, {
+        method: "POST",
+        body: {
+          name,
+          email,
+          password,
+          password_confirmation: confirmPassword,
+        },
+      });
+    },
+    onError: (err) => {
+      toast.error(err.message ?? "Failed to complete this request");
+    },
+    onSuccess: (res: any) => {
+      toast.success(res.message ?? "Success!");
+      navig.push(`/auth/verify-email?email=${encodeURIComponent(email)}`);
+    },
+  });
 
   const validateForm = () => {
     const newErrors: typeof errors = {};
@@ -49,7 +78,7 @@ export default function SignUpPage() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (validateForm()) {
-      console.log("Form submitted:", { email, password });
+      mutate();
     }
   };
 
@@ -69,6 +98,22 @@ export default function SignUpPage() {
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-2">
             <Label htmlFor="email" className="text-xs uppercase tracking-wider">
+              Full Name
+            </Label>
+            <Input
+              id="name"
+              type="text"
+              placeholder="John Doe"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className={errors.name ? "border-destructive" : ""}
+            />
+            {errors.name && (
+              <p className="text-xs text-destructive">{errors.name}</p>
+            )}
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="email" className="text-xs uppercase tracking-wider">
               Email Address
             </Label>
             <Input
@@ -85,7 +130,10 @@ export default function SignUpPage() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="password" className="text-xs uppercase tracking-wider">
+            <Label
+              htmlFor="password"
+              className="text-xs uppercase tracking-wider"
+            >
               Password
             </Label>
             <Input
@@ -117,7 +165,9 @@ export default function SignUpPage() {
               className={errors.confirmPassword ? "border-destructive" : ""}
             />
             {errors.confirmPassword && (
-              <p className="text-xs text-destructive">{errors.confirmPassword}</p>
+              <p className="text-xs text-destructive">
+                {errors.confirmPassword}
+              </p>
             )}
           </div>
 
@@ -140,8 +190,13 @@ export default function SignUpPage() {
             )}
           </div>
 
-          <Button type="submit" size="lg" className="w-full">
-            Create Account
+          <Button
+            type="submit"
+            size="lg"
+            className="w-full"
+            disabled={isPending}
+          >
+            {isPending ? "Creating Account..." : "Create Account"}
           </Button>
         </form>
 

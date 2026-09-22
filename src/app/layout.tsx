@@ -3,6 +3,8 @@ import { Josefin_Sans } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { Cormorant } from "next/font/google";
+import GodProvider from "@/provider/god-provider";
+import { Toaster } from "@/components/ui/sonner";
 const cormorant = Cormorant({
   subsets: ["latin"],
   weight: "400",
@@ -36,7 +38,12 @@ export default function RootLayout({
         "font-mono",
       )}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        <GodProvider>
+          {children}
+          <Toaster />
+        </GodProvider>
+      </body>
     </html>
   );
 }

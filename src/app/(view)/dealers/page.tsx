@@ -18,84 +18,18 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useQuery } from "@tanstack/react-query";
 import { howl } from "@/lib/utils";
 import { Spinner } from "@/components/ui/spinner";
-
-// const mockWatches = [
-//   {
-//     id: 1,
-//     brand: "Rolex",
-//     model: "Submariner Date 126610LN",
-//     year: "2020",
-//     price: "₹9,50,000",
-//     trend: "+4%",
-//     condition: "Mint",
-//     location: "Delhi NCR",
-//   },
-//   {
-//     id: 2,
-//     brand: "Omega",
-//     model: "Seamaster 300M",
-//     year: "2019",
-//     price: "₹7,20,000",
-//     trend: "+2%",
-//     condition: "Excellent",
-//     location: "Mumbai",
-//   },
-//   {
-//     id: 3,
-//     brand: "Tudor",
-//     model: "Black Bay Chronograph",
-//     year: "2021",
-//     price: "₹5,45,000",
-//     trend: "+5%",
-//     condition: "Good",
-//     location: "Bangalore",
-//   },
-//   {
-//     id: 4,
-//     brand: "Seiko",
-//     model: "Prospex Diver",
-//     year: "2020",
-//     price: "₹1,85,000",
-//     trend: "+3%",
-//     condition: "Mint",
-//     location: "Pune",
-//   },
-//   {
-//     id: 5,
-//     brand: "Citizen",
-//     model: "Eco-Drive",
-//     year: "2022",
-//     price: "₹95,000",
-//     trend: "+1%",
-//     condition: "Like New",
-//     location: "Chennai",
-//   },
-//   {
-//     id: 6,
-//     brand: "Breitling",
-//     model: "Avenger Chronograph",
-//     year: "2018",
-//     price: "₹8,25,000",
-//     trend: "+7%",
-//     condition: "Good",
-//     location: "Delhi NCR",
-//   },
-// ];
+import { useDebounce } from "react-haiku";
 
 export default function BrowsePage() {
   const [search, setSearch] = useState("");
-  const [sortBy, setSortBy] = useState("newest");
-  const [priceRange, setPriceRange] = useState("all");
-  const [condition, setCondition] = useState("all");
+  const [sortBy, setSortBy] = useState("-average_rating");
+  // const [priceRange, setPriceRange] = useState("all");
+  // const [condition, setCondition] = useState("all");
 
-  // const filteredWatches = mockWatches.filter(
-  //   (watch) =>
-  //     watch.brand.toLowerCase().includes(search.toLowerCase()) ||
-  //     watch.model.toLowerCase().includes(search.toLowerCase()),
-  // );
+  const debouncedSearch = useDebounce(search, 1000);
 
   const { data, isPending } = useQuery({
-    queryKey: ["delers"],
+    queryKey: ["delers", debouncedSearch, sortBy],
     queryFn: async (): Promise<{
       ok: boolean;
       message: string;
@@ -141,7 +75,7 @@ export default function BrowsePage() {
         };
       };
     }> => {
-      return howl(`/dealers`);
+      return howl(`/dealers?filter[search]=${debouncedSearch}&sort=${sortBy}`);
     },
   });
 
@@ -161,6 +95,7 @@ export default function BrowsePage() {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
+            <div className="col-span-2"></div>
             <Input
               placeholder="Search by brand or model"
               value={search}
@@ -172,14 +107,17 @@ export default function BrowsePage() {
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="newest">Newest Listings</SelectItem>
-                <SelectItem value="price-low">Price: Low to High</SelectItem>
-                <SelectItem value="price-high">Price: High to Low</SelectItem>
-                <SelectItem value="trending">Trending</SelectItem>
+                <SelectItem value="-average_rating">
+                  Rating: Highest to Lowest
+                </SelectItem>
+                <SelectItem value="average_rating">
+                  Price: Low to High
+                </SelectItem>
+                {/* <SelectItem value="trending">Trending</SelectItem> */}
               </SelectContent>
             </Select>
 
-            <Select value={condition} onValueChange={setCondition}>
+            {/* <Select value={condition} onValueChange={setCondition}>
               <SelectTrigger className="w-full">
                 <SelectValue />
               </SelectTrigger>
@@ -202,7 +140,7 @@ export default function BrowsePage() {
                 <SelectItem value="5-10">₹5L - ₹10L</SelectItem>
                 <SelectItem value="10+">₹10L+</SelectItem>
               </SelectContent>
-            </Select>
+            </Select> */}
           </div>
         </Card>
 

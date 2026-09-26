@@ -1,3 +1,4 @@
+"use client";
 import Header from "./_home/header";
 import Marquee from "react-fast-marquee";
 
@@ -6,11 +7,64 @@ import Arrival from "./_home/arrival";
 import Market from "./_home/market";
 import Verif from "./_home/verif";
 import DataGrid from "./_home/data-grid";
+import { useQuery } from "@tanstack/react-query";
+import { howl } from "@/lib/utils";
 
 export default function Page() {
+  const { data } = useQuery({
+    queryKey: ["discover"],
+    queryFn: (): Promise<{
+      ok: boolean;
+      message: string;
+      data: {
+        listings: {
+          data: Array<{
+            id: number;
+            seller: {
+              id: number;
+              name: string;
+              standing: any;
+            };
+            brand: string;
+            model: string;
+            watch_type: string;
+            reference_number: string;
+            price: number;
+            condition: string;
+            case_size: string;
+            year_of_production: string;
+            location: string;
+            accessories: Array<string>;
+            condition_notes: string;
+            images: Array<string>;
+            brand_certificate: any;
+            market_momentum?: number;
+            status: string;
+            is_verified: boolean;
+            created_at: string;
+            updated_at: string;
+          }>;
+          links: {
+            first: any;
+            last: any;
+            prev: any;
+            next: string;
+          };
+          meta: {
+            path: string;
+            per_page: number;
+            next_cursor: string;
+            prev_cursor: any;
+          };
+        };
+      };
+    }> => {
+      return howl(`/discover`);
+    },
+  });
   return (
     <>
-      <Header />
+      <Header data={data?.data?.listings?.data?.slice(0, 3)} />
       <Marquee speed={30} pauseOnHover>
         {Array(10)
           .fill({
@@ -33,7 +87,7 @@ export default function Page() {
           ))}
       </Marquee>
       <Brands />
-      <Arrival />
+      <Arrival data={data?.data?.listings?.data} />
       <Market />
       <Verif />
       <div className="py-24 bg-muted/30 text-center">

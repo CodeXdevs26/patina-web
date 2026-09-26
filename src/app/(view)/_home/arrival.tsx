@@ -1,12 +1,96 @@
 "use client";
+
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { CheckIcon } from "@phosphor-icons/react/dist/ssr";
 import Image from "next/image";
 import React from "react";
 
-export default function Arrival() {
+export default function Arrival({
+  data,
+}: {
+  data?: {
+    id: number;
+    seller: {
+      id: number;
+      name: string;
+      standing: any;
+    };
+    brand: string;
+    model: string;
+    watch_type: string;
+    reference_number: string;
+    price: number;
+    condition: string;
+    case_size: string;
+    year_of_production: string;
+    location: string;
+    accessories: Array<string>;
+    condition_notes: string;
+    images: Array<string>;
+    brand_certificate: any;
+    market_momentum?: number;
+    status: string;
+    is_verified: boolean;
+    created_at: string;
+    updated_at: string;
+  }[];
+}) {
   const [selectedCategory, setSelectedCategory] = React.useState<string>("All");
+
+  const fallbackWatches = [
+    {
+      id: "#",
+      seller: {
+        id: 1,
+        name: "Arjun",
+        standing: null,
+      },
+      brand: "Rolex",
+      model: "Submariner Date",
+      watch_type: "Diver",
+      reference_number: "",
+      price: 120000,
+      condition: "Mint",
+      case_size: "41mm",
+      year_of_production: "2020",
+      location: "Delhi NCR",
+      accessories: ["Box + Papers"],
+      condition_notes: "",
+      images: ["/watch.webp"],
+      brand_certificate: null,
+      market_momentum: 4,
+      status: "active",
+      is_verified: true,
+      created_at: "",
+      updated_at: "",
+    },
+  ];
+
+  const watches = data?.length ? data : fallbackWatches;
+
+  const formatPrice = (price?: number) => {
+    if (typeof price !== "number") return "₹ 1,20,000";
+
+    return `₹ ${price.toLocaleString("en-IN")}`;
+  };
+
+  const getImage = (watch: (typeof watches)[number]) => {
+    if (watch.images?.length && watch.images[0]) {
+      return watch.images[0];
+    }
+
+    return "/watch.webp";
+  };
+
+  const getAccessories = (watch: (typeof watches)[number]) => {
+    if (watch.accessories?.length) {
+      return watch.accessories.slice(0, 1);
+    }
+
+    return ["Box + Papers"];
+  };
+
   return (
     <section className="p-12">
       <div className="">
@@ -15,6 +99,7 @@ export default function Arrival() {
         </p>
         <h2 className="text-4xl font-display">New arrivals</h2>
       </div>
+
       <div className="space-x-2 mt-6">
         {[
           "All",
@@ -38,86 +123,107 @@ export default function Arrival() {
           </Button>
         ))}
       </div>
-      <div className="w-full grid grid-cols-5 mt-12 ">
-        {Array(5)
-          .fill("")
-          .map((_, index) => (
-            <div
-              className="flex flex-col relative justify-start items-center gap-4 border border-transparent hover:border-primary/20 hover:bg-primary/5 active:bg-primary/10 transition-all duration-300 cursor-pointer"
-              // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
-              key={index}
-            >
-              <div className="rounded-lg border size-7 p-1 text-xs flex justify-center items-center tracking-normal text-muted-foreground/50 absolute top-2 left-2 bg-background">
-                M
+
+      <div className="w-full grid grid-cols-5 mt-12">
+        {watches.slice(0, 5).map((watch) => (
+          <div
+            className="flex flex-col relative justify-start items-center gap-4 border border-transparent hover:border-primary/20 hover:bg-primary/5 active:bg-primary/10 transition-all duration-300 cursor-pointer"
+            key={watch.id}
+          >
+            <div className="rounded-lg border size-7 p-1 text-xs flex justify-center items-center tracking-normal text-muted-foreground/50 absolute top-2 left-2 bg-background">
+              M
+            </div>
+
+            <div className="border uppercase border-primary p-1 text-[10px] flex justify-center items-center tracking-normal text-primary absolute top-2 right-2 bg-primary/20 backdrop:blur-sm">
+              ✓ {watch.is_verified ? "Verified" : "Unverified"}
+            </div>
+
+            <div className="border uppercase p-1 text-[10px] flex justify-center items-center tracking-normal text-white/50 absolute top-10 right-2 bg-muted/80 backdrop:blur-sm">
+              Fair value
+            </div>
+
+            <Image
+              src={getImage(watch)}
+              height={500}
+              width={800}
+              alt={watch.model || watch.brand || "Watch"}
+              className="object-cover w-full aspect-video"
+            />
+
+            <div className="w-full p-4">
+              <p className="text-[10px] uppercase text-primary">
+                {watch.brand || "ROLEX"}
+              </p>
+
+              <h5 className="text-xl font-display">
+                {watch.model || "Submariner Date"}
+              </h5>
+
+              <div className="space-x-2">
+                <Badge
+                  className="text-[10px] text-muted-foreground"
+                  variant="secondary"
+                >
+                  {watch.year_of_production || "2020"}
+                </Badge>
+
+                <Badge
+                  className="text-[10px] text-muted-foreground"
+                  variant="secondary"
+                >
+                  {watch.case_size || "41mm"}
+                </Badge>
+
+                <Badge
+                  className="text-[10px] text-muted-foreground"
+                  variant="secondary"
+                >
+                  {watch.condition || "Mint"}
+                </Badge>
+
+                {getAccessories(watch).map((accessory) => (
+                  <Badge
+                    key={accessory}
+                    className="text-[10px] text-muted-foreground"
+                    variant="secondary"
+                  >
+                    {accessory}
+                  </Badge>
+                ))}
+
+                <Badge
+                  className="text-[10px] text-muted-foreground"
+                  variant="secondary"
+                >
+                  {watch.location || "Delhi NCR"}
+                </Badge>
               </div>
-              <div className="border uppercase border-primary p-1 text-[10px] flex justify-center items-center tracking-normal text-primary absolute top-2 right-2 bg-primary/20 backdrop:blur-sm">
-                ✓ Verified
-              </div>
-              <div className="border uppercase p-1 text-[10px] flex justify-center items-center tracking-normal text-white/50 absolute top-10 right-2 bg-muted/80 backdrop:blur-sm">
-                Fair value
-              </div>
-              <Image
-                src="/watch.webp"
-                height={500}
-                width={800}
-                alt="Rolex"
-                className="object-cover w-full aspect-video"
-              />
-              <div className="w-full p-4">
-                <p className="text-[10px] uppercase text-primary">ROLEX</p>
-                <h5 className="text-xl font-display">Submariner Date</h5>
-                <div className="space-x-2">
-                  <Badge
-                    className="text-[10px] text-muted-foreground"
-                    variant="secondary"
-                  >
-                    2020
-                  </Badge>
-                  <Badge
-                    className="text-[10px] text-muted-foreground"
-                    variant="secondary"
-                  >
-                    41mm
-                  </Badge>
-                  <Badge
-                    className="text-[10px] text-muted-foreground"
-                    variant="secondary"
-                  >
-                    Mint
-                  </Badge>
-                  <Badge
-                    className="text-[10px] text-muted-foreground"
-                    variant="secondary"
-                  >
-                    Box + Papers
-                  </Badge>
-                  <Badge
-                    className="text-[10px] text-muted-foreground"
-                    variant="secondary"
-                  >
-                    Delhi NCR
-                  </Badge>
+
+              <div className="mt-8 flex flex-row justify-between items-center">
+                <div className="flex flex-col justify-end items-start">
+                  <p className="text-2xl text-muted-foreground font-display">
+                    {formatPrice(watch.price)}
+                  </p>
+
+                  <p className="text-[10px] text-muted-foreground/50">
+                    Shipping · ₹250 shipping
+                  </p>
                 </div>
-                <div className="mt-8 flex flex-row justify-between items-center">
-                  <div className="flex flex-col justify-end items-start">
-                    <p className="text-2xl text-muted-foreground font-display">
-                      ₹ 1,20,000
-                    </p>
-                    <p className="text-[10px] text-muted-foreground/50">
-                      Shipping · ₹250 shipping
-                    </p>
-                  </div>
-                  <div className="flex flex-col justify-end items-end">
-                    <p className="flex gap-1 text-primary text-xs">
-                      <CheckIcon />
-                      Verified
-                    </p>
-                    <p className="text-xs text-muted-foreground">Arjun</p>
-                  </div>
+
+                <div className="flex flex-col justify-end items-end">
+                  <p className="flex gap-1 text-primary text-xs">
+                    <CheckIcon />
+                    {watch.is_verified ? "Verified" : "Unverified"}
+                  </p>
+
+                  <p className="text-xs text-muted-foreground">
+                    {watch.seller?.name || "Arjun"}
+                  </p>
                 </div>
               </div>
             </div>
-          ))}
+          </div>
+        ))}
       </div>
     </section>
   );

@@ -5,14 +5,14 @@ import { Separator } from "@/components/ui/separator";
 import Image from "next/image";
 export default function Header() {
   return (
-    <header className="lg:h-[calc(100vh-4rem)] divide-x w-full border-b grid lg:grid-cols-2 gap-12 lg:gap-0 mt-12">
+    <header className="lg:h-[calc(100vh-4rem)] divide-x w-full border-b grid lg:grid-cols-2 gap-12 lg:gap-0 mt-12 lg:mt-0">
       <div className="h-full flex flex-col justify-center items-center">
         <div className="w-full px-[6%] space-y-6">
           <p className="text-[8px] tracking-[0.2rem] text-primary flex gap-4 items-center uppercase">
             <span className="border-t border-primary/50 w-8" />
             India's pre-owned watch market
           </p>
-          <h1 className="text-7xl leading-[1] font-display">
+          <h1 className="text-7xl leading-none font-display">
             Where watches <br /> become <br />
             <span className="text-primary">assets.</span>
           </h1>

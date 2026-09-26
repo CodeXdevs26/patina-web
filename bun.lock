@@ -16,6 +16,7 @@
         "react-cookie": "^8.1.2",
         "react-dom": "19.2.4",
         "react-fast-marquee": "^1.6.5",
+        "react-haiku": "^2.4.1",
         "recharts": "3.8.0",
         "shadcn": "^4.13.0",
         "sonner": "^2.0.7",
@@ -913,6 +914,8 @@
     "react-dom": ["react-dom@19.2.4", "", { "dependencies": { "scheduler": "^0.27.0" }, "peerDependencies": { "react": "^19.2.4" } }, "sha512-AXJdLo8kgMbimY95O2aKQqsz2iWi9jMgKJhRBAxECE4IFxfcazB2LmzloIoibJI3C12IlY20+KFaLv+71bUJeQ=="],
 
     "react-fast-marquee": ["react-fast-marquee@1.6.5", "", { "peerDependencies": { "react": ">= 16.8.0 || ^18.0.0", "react-dom": ">= 16.8.0 || ^18.0.0" } }, "sha512-swDnPqrT2XISAih0o74zQVE2wQJFMvkx+9VZXYYNSLb/CUcAzU9pNj637Ar2+hyRw6b4tP6xh4GQZip2ZCpQpg=="],
+
+    "react-haiku": ["react-haiku@2.4.1", "", { "dependencies": { "react": ">=16.8.0" } }, "sha512-8f3JVL+VvmkHhd3OFQCtY46vmPJuVqNeaYH7aoZsh7mACvsafu3Sh3xvynBciaWi6/cl7ABIe9pR+Ur1kSJ69Q=="],
 
     "react-is": ["react-is@19.2.7", "", {}, "sha512-kZFnouyVv7eP/Phmrlo9FK+zcAdriZJvzxXHF1Sl1P377WSGe2G/JxVolhTrB/jeV47lKImhNUsijjHAAbcl/A=="],
 

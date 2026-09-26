@@ -18,109 +18,172 @@ import { Slider } from "@/components/ui/slider";
 import { useQuery } from "@tanstack/react-query";
 import { howl } from "@/lib/utils";
 import { useCookies } from "react-cookie";
+import { useDebounce } from "react-haiku";
 
-const mockWatches = [
-  {
-    id: 1,
-    brand: "Rolex",
-    model: "Submariner Date 126610LN",
-    year: "2020",
-    price: "₹9,50,000",
-    trend: "+4%",
-    condition: "Mint",
-    location: "Delhi NCR",
-  },
-  {
-    id: 2,
-    brand: "Omega",
-    model: "Seamaster 300M",
-    year: "2019",
-    price: "₹7,20,000",
-    trend: "+2%",
-    condition: "Excellent",
-    location: "Mumbai",
-  },
-  {
-    id: 3,
-    brand: "Tudor",
-    model: "Black Bay Chronograph",
-    year: "2021",
-    price: "₹5,45,000",
-    trend: "+5%",
-    condition: "Good",
-    location: "Bangalore",
-  },
-  {
-    id: 4,
-    brand: "Seiko",
-    model: "Prospex Diver",
-    year: "2020",
-    price: "₹1,85,000",
-    trend: "+3%",
-    condition: "Mint",
-    location: "Pune",
-  },
-  {
-    id: 5,
-    brand: "Citizen",
-    model: "Eco-Drive",
-    year: "2022",
-    price: "₹95,000",
-    trend: "+1%",
-    condition: "Like New",
-    location: "Chennai",
-  },
-  {
-    id: 6,
-    brand: "Breitling",
-    model: "Avenger Chronograph",
-    year: "2018",
-    price: "₹8,25,000",
-    trend: "+7%",
-    condition: "Good",
-    location: "Delhi NCR",
-  },
-  {
-    id: 7,
-    brand: "Breitling",
-    model: "Avenger Chronograph",
-    year: "2018",
-    price: "₹8,25,000",
-    trend: "+7%",
-    condition: "Good",
-    location: "Delhi NCR",
-  },
-  {
-    id: 8,
-    brand: "Breitling",
-    model: "Avenger Chronograph",
-    year: "2018",
-    price: "₹8,25,000",
-    trend: "+7%",
-    condition: "Good",
-    location: "Delhi NCR",
-  },
-];
+type Listing = {
+  id: number;
+  seller: {
+    id: number;
+    name: string;
+    standing: any;
+  };
+  brand: string;
+  model: string;
+  watch_type?: string;
+  reference_number: string;
+  price: number;
+  condition: string;
+  case_size: string;
+  year_of_production: string;
+  location: string;
+  accessories: string[];
+  condition_notes: string;
+  images: string[];
+  brand_certificate?: string;
+  market_momentum?: number;
+  status: string;
+  is_verified: boolean;
+  created_at: string;
+  updated_at: string;
+};
+
+type ListingsResponse = {
+  ok: boolean;
+  message: string;
+  data: {
+    listings: {
+      data: Listing[];
+      links: {
+        first: string;
+        last: string;
+        prev: string | null;
+        next: string | null;
+      };
+      meta: {
+        current_page: number;
+        from: number;
+        last_page: number;
+        links: Array<{
+          url?: string;
+          label: string;
+          page?: number;
+          active: boolean;
+        }>;
+        path: string;
+        per_page: number;
+        to: number;
+        total: number;
+      };
+    };
+  };
+};
 
 export default function BrowsePage() {
   const [search, setSearch] = useState("");
-  const [sortBy, setSortBy] = useState("newest");
-  const [priceRange, setPriceRange] = useState<number[]>([0, 100000]);
+  const [brand, setBrand] = useState("");
+  const [priceRange, setPriceRange] = useState<number[]>([0, 20000000]);
   const [condition, setCondition] = useState("all");
+
+  const debouncedSearch = useDebounce(search, 1000);
+  const debouncedPriceRange = useDebounce(priceRange, 1000);
+
   const [{ token }] = useCookies(["token"]);
 
-  const filteredWatches = mockWatches.filter(
-    (watch) =>
-      watch.brand.toLowerCase().includes(search.toLowerCase()) ||
-      watch.model.toLowerCase().includes(search.toLowerCase()),
-  );
+  const { data, isPending, isError } = useQuery({
+    queryKey: [
+      "listing",
+      debouncedSearch,
+      debouncedPriceRange,
+      brand,
+      condition,
+    ],
+    queryFn: async (): Promise<{
+      ok: boolean;
+      message: string;
+      data: {
+        listings: {
+          data: Array<{
+            id: number;
+            seller: {
+              id: number;
+              name: string;
+              standing: any;
+            };
+            brand: string;
+            model: string;
+            watch_type?: string;
+            reference_number: string;
+            price: number;
+            condition: string;
+            case_size: string;
+            year_of_production: string;
+            location: string;
+            accessories: Array<string>;
+            condition_notes: string;
+            images: Array<string>;
+            brand_certificate?: string;
+            market_momentum?: number;
+            status: string;
+            is_verified: boolean;
+            created_at: string;
+            updated_at: string;
+          }>;
+          links: {
+            first: string;
+            last: string;
+            prev: any;
+            next: string;
+          };
+          meta: {
+            current_page: number;
+            from: number;
+            last_page: number;
+            links: Array<{
+              url?: string;
+              label: string;
+              page?: number;
+              active: boolean;
+            }>;
+            path: string;
+            per_page: number;
+            to: number;
+            total: number;
+          };
+        };
+      };
+    }> => {
+      const params = new URLSearchParams();
 
-  const { data, isPending } = useQuery({
-    queryKey: ["listing"],
-    queryFn: async () => {
-      return howl("/listings", { token });
+      const filters = {
+        search: debouncedSearch,
+        "filter[min_price]": debouncedPriceRange[0],
+        "filter[max_price]": debouncedPriceRange[1],
+        "filter[brand]": brand,
+        "filter[condition]": condition !== "all" ? condition : undefined,
+      };
+
+      Object.entries(filters).forEach(([key, value]) => {
+        if (value !== undefined && value !== null && value !== "") {
+          params.set(key, String(value));
+        }
+      });
+
+      return howl(`/listings?${params.toString()}`, { token });
     },
   });
+
+  const { data: brandsData } = useQuery({
+    queryKey: ["brands"],
+    queryFn: async (): Promise<{
+      ok: boolean;
+      message: string;
+      data: Array<string>;
+    }> => {
+      return howl("/watch-data/brands", { token });
+    },
+  });
+
+  const listings = data?.data?.listings?.data ?? [];
 
   return (
     <div className="min-h-screen bg-background">
@@ -132,7 +195,7 @@ export default function BrowsePage() {
           <h1 className="text-5xl font-display">Browse Watches</h1>
         </div>
 
-        <Card className="p-6 border border-border space-y-6">
+        <Card className="p-6 border border-border space-y-0">
           <div>
             <h3 className="font-display text-lg mb-4">Search & Filter</h3>
           </div>
@@ -144,15 +207,17 @@ export default function BrowsePage() {
               onChange={(e) => setSearch(e.target.value)}
             />
 
-            <Select value={sortBy} onValueChange={setSortBy}>
+            <Select value={brand} onValueChange={setBrand}>
               <SelectTrigger className="w-full">
-                <SelectValue />
+                <SelectValue placeholder="Select Brand" />
               </SelectTrigger>
+
               <SelectContent>
-                <SelectItem value="newest">Newest Listings</SelectItem>
-                <SelectItem value="price-low">Price: Low to High</SelectItem>
-                <SelectItem value="price-high">Price: High to Low</SelectItem>
-                <SelectItem value="trending">Trending</SelectItem>
+                {brandsData?.data?.map((brand) => (
+                  <SelectItem key={brand} value={brand}>
+                    {brand}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
 
@@ -160,28 +225,33 @@ export default function BrowsePage() {
               <SelectTrigger className="w-full">
                 <SelectValue />
               </SelectTrigger>
+
               <SelectContent>
                 <SelectItem value="all">All Conditions</SelectItem>
-                <SelectItem value="mint">Mint</SelectItem>
-                <SelectItem value="excellent">Excellent</SelectItem>
-                <SelectItem value="good">Good</SelectItem>
+
+                <SelectItem value="Mint">Mint</SelectItem>
+
+                <SelectItem value="Excellent">Excellent</SelectItem>
+
+                <SelectItem value="Good">Good</SelectItem>
               </SelectContent>
             </Select>
 
             <div className="flex items-center gap-4">
               <span className="whitespace-nowrap">Price range:</span>
+
               <Slider
-                defaultValue={[0, 100000]}
-                max={100000}
+                max={20000000}
                 step={100}
-                className=""
-                onValueChange={(value) => setPriceRange(value as number[])}
                 value={priceRange}
+                onValueChange={(value) => setPriceRange(value as number[])}
               />
+
               <div className="p-2 space-y-2 space-x-2">
                 <div className="whitespace-nowrap">
                   Min: ₹{priceRange[0] ?? 0}
                 </div>
+
                 <div className="whitespace-nowrap">
                   Max: ₹{priceRange[1] ?? 0}
                 </div>
@@ -192,70 +262,102 @@ export default function BrowsePage() {
 
         <div>
           <p className="text-sm text-muted-foreground mb-6">
-            Showing {filteredWatches.length} watches
+            {isPending
+              ? "Loading watches..."
+              : `Showing ${listings.length} watches`}
           </p>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3  xl:grid-cols-4 divide-x! divide-y!">
-            {filteredWatches.map((watch) => (
-              <Card
-                key={watch.id}
-                className="border-0 ring-0! border-border hover:bg-muted/50 transition-colors overflow-hidden flex flex-col pt-0! last-of-type:border-b"
-              >
-                <div className="bg-muted/30 h-48 flex items-center justify-center">
-                  <Image
-                    src="/rolex.webp"
-                    alt="Watch"
-                    height={100}
-                    width={140}
-                    className="object-contain h-full p-6"
-                  />
-                </div>
+          {isError && (
+            <Card className="p-8 text-center">
+              <p className="text-muted-foreground">Failed to load listings.</p>
+            </Card>
+          )}
 
-                <div className="p-6 flex flex-col flex-1">
-                  <div className="flex justify-between items-start mb-3">
-                    <div>
-                      <p className="text-[10px] uppercase text-primary/50 mb-1">
-                        {watch.brand}
-                      </p>
-                      <h3 className="font-display text-lg">{watch.model}</h3>
+          {!isPending && !isError && listings.length === 0 && (
+            <Card className="p-8 text-center">
+              <p className="text-muted-foreground">No watches found.</p>
+            </Card>
+          )}
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 divide-x! divide-y!">
+            {listings.map((watch) => {
+              const image = watch.images?.[0] || "/rolex.webp";
+
+              return (
+                <Card
+                  key={watch.id}
+                  className="border-0 ring-0! border-border hover:bg-muted/50 transition-colors overflow-hidden flex flex-col pt-0!"
+                >
+                  <div className="bg-muted/30 h-48 flex items-center justify-center">
+                    <Image
+                      src={image}
+                      alt={`${watch.brand} ${watch.model}`}
+                      height={100}
+                      width={140}
+                      className="object-contain h-full p-6"
+                    />
+                  </div>
+
+                  <div className="p-6 flex flex-col flex-1">
+                    <div className="flex justify-between items-start mb-3">
+                      <div>
+                        <p className="text-[10px] uppercase text-primary/50 mb-1">
+                          {watch.brand}
+                        </p>
+
+                        <h3 className="font-display text-lg">{watch.model}</h3>
+                      </div>
                     </div>
-                    {/* <Button variant="ghost" size="sm">
-                      <HeartIcon size={16} />
-                    </Button> */}
-                  </div>
 
-                  <div className="flex gap-2 flex-wrap mb-4">
-                    <Badge
-                      variant="secondary"
-                      className="text-[10px] text-white"
-                    >
-                      {watch.year}
-                    </Badge>
-                    <Badge
-                      variant="secondary"
-                      className="text-[10px] text-white"
-                    >
-                      {watch.condition}
-                    </Badge>
-                    <Badge
-                      variant="secondary"
-                      className="text-[10px] text-white"
-                    >
-                      {watch.location}
-                    </Badge>
-                  </div>
+                    <div className="flex gap-2 flex-wrap mb-4">
+                      <Badge
+                        variant="secondary"
+                        className="text-[10px] text-white"
+                      >
+                        {watch.year_of_production}
+                      </Badge>
 
-                  <div className="mb-4 flex-1">
-                    <h4 className="font-display text-2xl">{watch.price}</h4>
-                    <p className="text-sm text-green-600">{watch.trend}</p>
-                  </div>
+                      <Badge
+                        variant="secondary"
+                        className="text-[10px] text-white"
+                      >
+                        {watch.condition}
+                      </Badge>
 
-                  <Button asChild className="w-full">
-                    <Link href={`/watch/${watch.id}`}>View Details</Link>
-                  </Button>
-                </div>
-              </Card>
-            ))}
+                      <Badge
+                        variant="secondary"
+                        className="text-[10px] text-white"
+                      >
+                        {watch.location}
+                      </Badge>
+                    </div>
+
+                    <div className="mb-4 flex-1">
+                      <h4 className="font-display text-2xl">
+                        ₹{watch.price.toLocaleString("en-IN")}
+                      </h4>
+
+                      {watch.market_momentum !== undefined && (
+                        <p
+                          className={
+                            watch.market_momentum >= 0
+                              ? "text-sm text-green-600"
+                              : "text-sm text-red-600"
+                          }
+                        >
+                          {watch.market_momentum >= 0 ? "+" : ""}
+                          {watch.market_momentum ?? 0}%
+                        </p>
+                      )}
+                    </div>
+
+                    <Button asChild className="w-full">
+                      <Link href={`/watch/${watch.id}`}>View Details</Link>
+                    </Button>
+                  </div>
+                </Card>
+              );
+            })}
           </div>
         </div>
       </div>

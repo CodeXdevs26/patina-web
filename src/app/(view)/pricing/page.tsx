@@ -20,120 +20,20 @@ import {
   ChartTooltipContent,
   type ChartConfig,
 } from "@/components/ui/chart";
-import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
+import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
 import { useQuery } from "@tanstack/react-query";
 import { howl } from "@/lib/utils";
-const mockWatches = [
-  {
-    id: 1,
-    brand: "Rolex",
-    model: "Submariner Date 126610LN",
-    year: "2020",
-    price: "₹9,50,000",
-    trend: "+4%",
-    condition: "Mint",
-    location: "Delhi NCR",
-  },
-  {
-    id: 2,
-    brand: "Omega",
-    model: "Seamaster 300M",
-    year: "2019",
-    price: "₹7,20,000",
-    trend: "+2%",
-    condition: "Excellent",
-    location: "Mumbai",
-  },
-  {
-    id: 3,
-    brand: "Tudor",
-    model: "Black Bay Chronograph",
-    year: "2021",
-    price: "₹5,45,000",
-    trend: "+5%",
-    condition: "Good",
-    location: "Bangalore",
-  },
-  {
-    id: 4,
-    brand: "Seiko",
-    model: "Prospex Diver",
-    year: "2020",
-    price: "₹1,85,000",
-    trend: "+3%",
-    condition: "Mint",
-    location: "Pune",
-  },
-  {
-    id: 5,
-    brand: "Citizen",
-    model: "Eco-Drive",
-    year: "2022",
-    price: "₹95,000",
-    trend: "+1%",
-    condition: "Like New",
-    location: "Chennai",
-  },
-  {
-    id: 6,
-    brand: "Breitling",
-    model: "Avenger Chronograph",
-    year: "2018",
-    price: "₹8,25,000",
-    trend: "+7%",
-    condition: "Good",
-    location: "Delhi NCR",
-  },
-  {
-    id: 7,
-    brand: "Breitling",
-    model: "Avenger Chronograph",
-    year: "2018",
-    price: "₹8,25,000",
-    trend: "+7%",
-    condition: "Good",
-    location: "Delhi NCR",
-  },
-  {
-    id: 8,
-    brand: "Breitling",
-    model: "Avenger Chronograph",
-    year: "2018",
-    price: "₹8,25,000",
-    trend: "+7%",
-    condition: "Good",
-    location: "Delhi NCR",
-  },
-];
+import { Spinner } from "@/components/ui/spinner";
 
 export default function BrowsePage() {
   const [search, setSearch] = useState("");
   const [sortBy, setSortBy] = useState("newest");
-  const [priceRange, setPriceRange] = useState("all");
   const [condition, setCondition] = useState("all");
 
-  const filteredWatches = mockWatches.filter(
-    (watch) =>
-      watch.brand.toLowerCase().includes(search.toLowerCase()) ||
-      watch.model.toLowerCase().includes(search.toLowerCase()),
-  );
-
-  const chartData = [
-    { month: "January", desktop: 186, mobile: 80 },
-    { month: "February", desktop: 305, mobile: 200 },
-    { month: "March", desktop: 237, mobile: 120 },
-    { month: "April", desktop: 73, mobile: 190 },
-    { month: "May", desktop: 209, mobile: 130 },
-    { month: "June", desktop: 214, mobile: 140 },
-  ];
   const chartConfig = {
-    desktop: {
-      label: "Desktop",
+    price: {
+      label: "Price",
       color: "var(--primary)",
-    },
-    mobile: {
-      label: "Mobile",
-      color: "var(--accent)",
     },
   } satisfies ChartConfig;
 
@@ -142,36 +42,65 @@ export default function BrowsePage() {
     queryFn: async (): Promise<{
       ok: boolean;
       message: string;
-      data: Array<{
-        brand: string;
-        model: string;
-        reference_number: string;
-        size: string;
-        display_name: string;
-        current_market_price: number;
-        momentum_1m_percentage: number;
-        value_badge: string;
-        mini_chart_data: Array<{
-          date: string;
-          price: number;
+      data: {
+        overall_performance: {
+          current_value: number;
+          momentum_percentage: number;
+          chart_data: Array<{
+            date: string;
+            price: number;
+          }>;
+        };
+        feed: Array<{
+          brand: string;
+          model: string;
+          reference_number: string;
+          size: string;
+          display_name: string;
+          current_market_price: number;
+          momentum_1m_percentage: number;
+          value_badge: string;
+          mini_chart_data: Array<{
+            date: string;
+            price: number;
+          }>;
         }>;
-      }>;
+      };
     }> => {
       return howl("/market/feed");
     },
   });
 
+  const chartData =
+    data?.data?.overall_performance?.chart_data.map((item) => ({
+      date: item.date,
+      price: `₹${item.price}`,
+    })) ?? [];
+
+  if (isPending) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-muted-foreground text-sm flex items-center gap-2">
+          <Spinner /> Loading...
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background">
-      <pre className="bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900 text-amber-400 rounded-xl p-6 shadow-lg overflow-x-auto text-sm leading-relaxed border border-zinc-700">
+      {/* <pre className="bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900 text-amber-400 rounded-xl p-6 shadow-lg overflow-x-auto text-sm leading-relaxed border border-zinc-700">
         <code className="whitespace-pre-wrap">
           {JSON.stringify(data, null, 2)}
         </code>
-      </pre>
+      </pre> */}
       <div className="px-10 mt-12 space-y-12">
         <h1 className="text-4xl font-display">Market Performance</h1>
         <h1 className="text-4xl font-display text-primary">
-          1,484.49 <sup className="text-xl text-green-600">+48.45%</sup>
+          ₹{data?.data?.overall_performance?.current_value.toFixed(2)}{" "}
+          <sup className="text-xl text-green-600">
+            {data?.data?.overall_performance?.momentum_percentage.toFixed(2)}%
+          </sup>
         </h1>
         <ChartContainer config={chartConfig} className="h-48 w-full">
           <AreaChart
@@ -184,7 +113,7 @@ export default function BrowsePage() {
           >
             <CartesianGrid vertical={false} />
             <XAxis
-              dataKey="month"
+              dataKey="date"
               tickLine={false}
               axisLine={false}
               tickMargin={8}
@@ -192,45 +121,25 @@ export default function BrowsePage() {
             />
             <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
             <defs>
-              <linearGradient id="fillDesktop" x1="0" y1="0" x2="0" y2="1">
+              <linearGradient id="fillPrice" x1="0" y1="0" x2="0" y2="1">
                 <stop
                   offset="5%"
-                  stopColor="var(--color-desktop)"
+                  stopColor="var(--color-price)"
                   stopOpacity={0.8}
                 />
                 <stop
                   offset="95%"
-                  stopColor="var(--color-desktop)"
-                  stopOpacity={0.1}
-                />
-              </linearGradient>
-              <linearGradient id="fillMobile" x1="0" y1="0" x2="0" y2="1">
-                <stop
-                  offset="5%"
-                  stopColor="var(--color-mobile)"
-                  stopOpacity={0.8}
-                />
-                <stop
-                  offset="95%"
-                  stopColor="var(--color-mobile)"
+                  stopColor="var(--color-price)"
                   stopOpacity={0.1}
                 />
               </linearGradient>
             </defs>
             <Area
-              dataKey="mobile"
+              dataKey="price"
               type="natural"
-              fill="url(#fillMobile)"
+              fill="url(#fillPrice)"
               fillOpacity={0.4}
-              stroke="var(--color-mobile)"
-              stackId="a"
-            />
-            <Area
-              dataKey="desktop"
-              type="natural"
-              fill="url(#fillDesktop)"
-              fillOpacity={0.4}
-              stroke="var(--color-desktop)"
+              stroke="var(--color-price)"
               stackId="a"
             />
           </AreaChart>
@@ -284,13 +193,13 @@ export default function BrowsePage() {
 
         <div>
           <p className="text-sm text-muted-foreground mb-6">
-            Showing {data?.data?.length} watches
+            Showing {data?.data?.feed?.length ?? "0"} watches
           </p>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3  xl:grid-cols-4 divide-x! divide-y!">
-            {data?.data?.map((watch) => (
+            {data?.data?.feed?.map((watch) => (
               <Card
-                key={watch.reference_number}
+                key={watch?.reference_number}
                 className="border-0 ring-0! border-border hover:bg-muted/50 transition-colors overflow-hidden flex flex-col pt-0! last-of-type:border-b"
               >
                 <div className="bg-muted/30 h-48 flex items-center justify-center">
@@ -304,15 +213,20 @@ export default function BrowsePage() {
                   <ChartContainer config={chartConfig} className="h-48 w-full">
                     <AreaChart
                       accessibilityLayer
-                      data={watch.mini_chart_data}
+                      data={watch?.mini_chart_data}
                       margin={{
                         left: 12,
                         right: 12,
                       }}
                     >
+                      <YAxis
+                        domain={["dataMin", (dataMax: number) => dataMax * 2]}
+                        hide
+                      />
+
                       <defs>
                         <linearGradient
-                          id="fillDesktop"
+                          id="fillPrice"
                           x1="0"
                           y1="0"
                           x2="0"
@@ -320,22 +234,23 @@ export default function BrowsePage() {
                         >
                           <stop
                             offset="5%"
-                            stopColor="var(--color-desktop)"
+                            stopColor="var(--color-price)"
                             stopOpacity={0.8}
                           />
                           <stop
                             offset="95%"
-                            stopColor="var(--color-desktop)"
+                            stopColor="var(--color-price)"
                             stopOpacity={0.1}
                           />
                         </linearGradient>
                       </defs>
+
                       <Area
                         dataKey="price"
                         type="natural"
-                        fill="url(#fillDesktop)"
+                        fill="url(#fillPrice)"
                         fillOpacity={0.4}
-                        stroke="var(--color-desktop)"
+                        stroke="var(--color-price)"
                         stackId="a"
                       />
                     </AreaChart>
@@ -347,20 +262,25 @@ export default function BrowsePage() {
                     <div className="flex justify-between items-start mb-3">
                       <div>
                         <p className="text-[10px] uppercase text-primary/50 mb-1">
-                          {watch.brand}
+                          {watch?.brand ?? "N/A"}
                         </p>
-                        <h3 className="font-display text-lg">{watch.model}</h3>
+                        <h3 className="font-display text-lg">
+                          {watch?.model ?? "N/A"}
+                        </h3>
                       </div>
                     </div>
                     <div className="my-4 flex flex-row justify-between items-center w-full ">
                       <div className="flex flex-col justify-end items-start w-full">
                         <p className="text-2xl text-muted-foreground font-display">
-                          ₹ {watch.current_market_price.toLocaleString("en-IN")}
+                          ₹{" "}
+                          {watch?.current_market_price?.toLocaleString(
+                            "en-IN",
+                          ) ?? "N/A"}
                         </p>
                         <div className="text-[10px] text-muted-foreground/50 space-x-2 mt-2 w-full flex items-center justify-end ">
-                          <span>{watch?.size}</span>
+                          <span>{watch?.size ?? "N/A"}</span>
                           <Badge className="bg-green-900/20 border-green-800 text-green-800 text-[10px]">
-                            {watch?.value_badge}
+                            {watch?.value_badge ?? "N/A"}
                           </Badge>
                         </div>
                       </div>
@@ -368,7 +288,7 @@ export default function BrowsePage() {
                   </div>
                   <div className="w-full"></div>
                   <Button asChild className="w-full">
-                    <Link href={`/pricing/${watch.reference_number}`}>
+                    <Link href={`/pricing/${watch?.reference_number}`}>
                       View Details
                     </Link>
                   </Button>

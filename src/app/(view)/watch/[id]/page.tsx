@@ -12,22 +12,67 @@ import {
   ArrowLeftIcon,
 } from "@phosphor-icons/react";
 import Image from "next/image";
+import { useQuery } from "@tanstack/react-query";
+import { useParams } from "next/navigation";
+import { howl } from "@/lib/utils";
 
 export default function WatchDetailsPage() {
+  const params = useParams();
+  const { id } = params;
+
+  const { data, isPending } = useQuery({
+    queryKey: ["watchDetails"],
+    queryFn: async (): Promise<{
+      ok: boolean;
+      message: string;
+      data: {
+        listing: {
+          id: number;
+          seller: {
+            id: number;
+            name: string;
+            standing: any;
+          };
+          brand: string;
+          model: string;
+          watch_type: any;
+          reference_number: string;
+          price: number;
+          condition: string;
+          case_size: string;
+          year_of_production: string;
+          location: string;
+          accessories: Array<string>;
+          condition_notes: string;
+          images: Array<string>;
+          brand_certificate: string;
+          market_momentum: any;
+          status: string;
+          is_verified: boolean;
+          created_at: string;
+          updated_at: string;
+        };
+        market_data: any;
+      };
+    }> => {
+      return howl(`/listings/${id}`);
+    },
+    enabled: !!id,
+  });
+
   const watchData = {
-    brand: "Rolex",
-    model: "Submariner Date 126610LN",
-    year: "2020",
-    reference: "126610LN",
-    price: "₹9,50,000",
-    condition: "Mint",
-    location: "Delhi NCR",
-    seller: "Mumbai Vintage Watches",
-    verified: true,
-    views: 342,
-    trend: "+4% vs market",
-    description:
-      "Excellent condition Rolex Submariner with original box and papers. Complete set with all documentation. Maintained regularly by authorized Rolex service center.",
+    brand: data?.data.listing.brand || "N/A",
+    model: data?.data.listing.model || "N/A",
+    year: data?.data.listing.year_of_production || "N/A",
+    reference: data?.data.listing.reference_number || "Loading..",
+    price: data?.data.listing.price || "Loading..",
+    condition: data?.data.listing.condition || "Loading..",
+    location: data?.data.listing.location || "N/A",
+    seller: data?.data.listing.seller?.name || "N/A",
+    verified: data?.data.listing.is_verified || true,
+    // views: 342,
+    trend: data?.data.market_data?.trend || "N/A",
+    description: data?.data.listing.condition_notes || "N/A",
   };
 
   return (
@@ -47,7 +92,7 @@ export default function WatchDetailsPage() {
         <div className="lg:col-span-2 space-y-8">
           <div className="bg-muted/30 aspect-video rounded-lg flex items-center justify-center">
             <Image
-              src="/watch.webp"
+              src={data?.data?.listing?.images?.[0] || "/watch.webp"}
               alt="Watch"
               width={800}
               height={600}
@@ -80,15 +125,17 @@ export default function WatchDetailsPage() {
                   </div>
                   <div>
                     <p className="text-[10px] uppercase text-muted-foreground mb-1">
-                      Case Material
+                      Case Size
                     </p>
-                    <p className="text-sm">Stainless Steel</p>
+                    <p className="text-sm">{data?.data?.listing?.case_size}</p>
                   </div>
                   <div>
                     <p className="text-[10px] uppercase text-muted-foreground mb-1">
-                      Water Resistance
+                      Watch Type
                     </p>
-                    <p className="text-sm">300m / 1000ft</p>
+                    <p className="text-sm">
+                      {data?.data?.listing?.watch_type ?? "Not specified"}
+                    </p>
                   </div>
                   <div>
                     <p className="text-[10px] uppercase text-muted-foreground mb-1">
@@ -117,22 +164,15 @@ export default function WatchDetailsPage() {
                   What&apos;s Included
                 </h3>
                 <ul className="space-y-2">
-                  <li className="text-sm flex items-center gap-2">
-                    <span className="w-2 h-2 bg-primary rounded-full" />
-                    Original Box
-                  </li>
-                  <li className="text-sm flex items-center gap-2">
-                    <span className="w-2 h-2 bg-primary rounded-full" />
-                    Original Papers
-                  </li>
-                  <li className="text-sm flex items-center gap-2">
-                    <span className="w-2 h-2 bg-primary rounded-full" />
-                    Warranty Card
-                  </li>
-                  <li className="text-sm flex items-center gap-2">
-                    <span className="w-2 h-2 bg-primary rounded-full" />
-                    Service History
-                  </li>
+                  {data?.data?.listing?.accessories?.map((accessory) => (
+                    <li
+                      className="text-sm flex items-center gap-2"
+                      key={accessory}
+                    >
+                      <span className="w-2 h-2 bg-primary rounded-full" />
+                      {accessory}
+                    </li>
+                  ))}
                 </ul>
               </Card>
             </TabsContent>
@@ -140,7 +180,8 @@ export default function WatchDetailsPage() {
             <TabsContent value="condition" className="space-y-6 mt-6">
               <Card className="p-6 border border-border">
                 <h3 className="font-display text-lg mb-4">Condition Report</h3>
-                <div className="space-y-4">
+                <p>{data?.data?.listing?.condition_notes}</p>
+                {/* <div className="space-y-4">
                   <div>
                     <p className="text-sm font-semibold mb-2">Case</p>
                     <p className="text-xs text-muted-foreground">
@@ -168,54 +209,56 @@ export default function WatchDetailsPage() {
                       Light scratches on links, properly sized
                     </p>
                   </div>
-                </div>
+                </div> */}
               </Card>
             </TabsContent>
 
-            <TabsContent value="seller" className="space-y-6 mt-6">
-              <Card className="p-6 border border-border">
-                <h3 className="font-display text-lg mb-4">
-                  Seller Information
-                </h3>
-                <div className="space-y-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center">
-                      <p className="text-xs font-semibold">MW</p>
-                    </div>
-                    <div>
-                      <p className="font-semibold">{watchData.seller}</p>
-                      <div className="flex items-center gap-1">
-                        <ShieldIcon size={14} className="text-green-600" />
-                        <p className="text-xs text-green-600">
-                          Verified Dealer
-                        </p>
+            {data?.data?.listing?.seller && (
+              <TabsContent value="seller" className="space-y-6 mt-6">
+                <Card className="p-6 border border-border">
+                  <h3 className="font-display text-lg mb-4">
+                    Seller Information
+                  </h3>
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center">
+                        <p className="text-xs font-semibold">MW</p>
+                      </div>
+                      <div>
+                        <p className="font-semibold">{watchData.seller}</p>
+                        <div className="flex items-center gap-1">
+                          <ShieldIcon size={14} className="text-green-600" />
+                          <p className="text-xs text-green-600">
+                            Verified Dealer
+                          </p>
+                        </div>
                       </div>
                     </div>
-                  </div>
 
-                  <Separator />
+                    <Separator />
 
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <p className="text-[10px] uppercase text-muted-foreground mb-1">
-                        Member Since
-                      </p>
-                      <p className="text-sm">2018</p>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <p className="text-[10px] uppercase text-muted-foreground mb-1">
+                          Member Since
+                        </p>
+                        <p className="text-sm">2018</p>
+                      </div>
+                      <div>
+                        <p className="text-[10px] uppercase text-muted-foreground mb-1">
+                          Total Sales
+                        </p>
+                        <p className="text-sm">245 watches</p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="text-[10px] uppercase text-muted-foreground mb-1">
-                        Total Sales
-                      </p>
-                      <p className="text-sm">245 watches</p>
-                    </div>
+
+                    <Separator />
+
+                    <Button className="w-full">Contact Seller</Button>
                   </div>
-
-                  <Separator />
-
-                  <Button className="w-full">Contact Seller</Button>
-                </div>
-              </Card>
-            </TabsContent>
+                </Card>
+              </TabsContent>
+            )}
           </Tabs>
         </div>
 
@@ -229,7 +272,7 @@ export default function WatchDetailsPage() {
             </div>
 
             <div>
-              <h2 className="font-display text-4xl mb-2">{watchData.price}</h2>
+              <h2 className="font-display text-4xl mb-2">₹{watchData.price}</h2>
               <div className="flex gap-2 flex-wrap">
                 <Badge className="bg-green-900/20 border-green-800 text-green-800">
                   {watchData.trend}
@@ -266,10 +309,10 @@ export default function WatchDetailsPage() {
                 <span className="text-muted-foreground">Location:</span>{" "}
                 {watchData.location}
               </p>
-              <p>
+              {/* <p>
                 <span className="text-muted-foreground">Views:</span>{" "}
                 {watchData.views}
-              </p>
+              </p> */}
               <p className="text-muted-foreground">
                 All PATINA watches come with authenticity verified status
               </p>

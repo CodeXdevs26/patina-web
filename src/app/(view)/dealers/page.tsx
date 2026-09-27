@@ -23,9 +23,6 @@ import { useDebounce } from "react-haiku";
 export default function BrowsePage() {
   const [search, setSearch] = useState("");
   const [sortBy, setSortBy] = useState("-average_rating");
-  // const [priceRange, setPriceRange] = useState("all");
-  // const [condition, setCondition] = useState("all");
-
   const debouncedSearch = useDebounce(search, 1000);
 
   const { data, isPending } = useQuery({
@@ -86,7 +83,7 @@ export default function BrowsePage() {
           <p className="text-[10px] uppercase text-primary/50 tracking-[0.2rem]">
             Collection
           </p>
-          <h1 className="text-5xl font-display">Browse Watches</h1>
+          <h1 className="text-5xl font-display">Browse Dealers</h1>
         </div>
 
         <Card className="p-6 border border-border space-y-6">
@@ -97,7 +94,7 @@ export default function BrowsePage() {
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
             <div className="col-span-2"></div>
             <Input
-              placeholder="Search by brand or model"
+              placeholder="Search by Details"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
@@ -111,7 +108,7 @@ export default function BrowsePage() {
                   Rating: Highest to Lowest
                 </SelectItem>
                 <SelectItem value="average_rating">
-                  Price: Low to High
+                  Ratin: Low to High
                 </SelectItem>
                 {/* <SelectItem value="trending">Trending</SelectItem> */}
               </SelectContent>

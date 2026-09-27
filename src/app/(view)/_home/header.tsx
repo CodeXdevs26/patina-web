@@ -35,15 +35,15 @@ export default function Header({
   }[];
 }) {
   const fallbackWatch = {
-    brand: "Rolex",
-    model: "Submariner Date 126610LN",
-    price: 950000,
-    year_of_production: "2020",
-    case_size: "41mm",
-    condition: "Mint",
-    accessories: ["Box + Papers"],
-    location: "Delhi NCR",
-    market_momentum: 4,
+    brand: " ",
+    model: " ",
+    price: undefined,
+    year_of_production: " ",
+    case_size: " ",
+    condition: " ",
+    accessories: [" "],
+    location: " ",
+    market_momentum: " ",
     images: ["/watch.webp"],
   };
 
@@ -53,7 +53,7 @@ export default function Header({
   const secondaryWatches = [watches[1] ?? featured, watches[2] ?? featured];
 
   const formatPrice = (price?: number) => {
-    if (typeof price !== "number") return "₹9,50,000";
+    if (typeof price !== "number") return " ";
 
     return `₹${price.toLocaleString("en-IN")}`;
   };
@@ -63,7 +63,7 @@ export default function Header({
       return watch.accessories.slice(0, 1);
     }
 
-    return ["Box + Papers"];
+    return [" "];
   };
 
   const getImage = (watch: (typeof watches)[number]) => {

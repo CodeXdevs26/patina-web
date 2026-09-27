@@ -9,57 +9,71 @@ import Verif from "./_home/verif";
 import DataGrid from "./_home/data-grid";
 import { useQuery } from "@tanstack/react-query";
 import { howl } from "@/lib/utils";
+import { useState } from "react";
+
+interface Discover {
+  ok: boolean;
+  message: string;
+  data: {
+    listings: {
+      data: Array<{
+        id: number;
+        seller: {
+          id: number;
+          name: string;
+          standing: any;
+        };
+        brand: string;
+        model: string;
+        watch_type: string;
+        reference_number: string;
+        price: number;
+        condition: string;
+        case_size: string;
+        year_of_production: string;
+        location: string;
+        accessories: Array<string>;
+        condition_notes: string;
+        images: Array<string>;
+        brand_certificate: any;
+        market_momentum?: number;
+        status: string;
+        is_verified: boolean;
+        created_at: string;
+        updated_at: string;
+      }>;
+      links: {
+        first: any;
+        last: any;
+        prev: any;
+        next: string;
+      };
+      meta: {
+        path: string;
+        per_page: number;
+        next_cursor: string;
+        prev_cursor: any;
+      };
+    };
+  };
+}
 
 export default function Page() {
+  const [arrivalType, setArrivalType] = useState<string>("All");
   const { data } = useQuery({
     queryKey: ["discover"],
-    queryFn: (): Promise<{
-      ok: boolean;
-      message: string;
-      data: {
-        listings: {
-          data: Array<{
-            id: number;
-            seller: {
-              id: number;
-              name: string;
-              standing: any;
-            };
-            brand: string;
-            model: string;
-            watch_type: string;
-            reference_number: string;
-            price: number;
-            condition: string;
-            case_size: string;
-            year_of_production: string;
-            location: string;
-            accessories: Array<string>;
-            condition_notes: string;
-            images: Array<string>;
-            brand_certificate: any;
-            market_momentum?: number;
-            status: string;
-            is_verified: boolean;
-            created_at: string;
-            updated_at: string;
-          }>;
-          links: {
-            first: any;
-            last: any;
-            prev: any;
-            next: string;
-          };
-          meta: {
-            path: string;
-            per_page: number;
-            next_cursor: string;
-            prev_cursor: any;
-          };
-        };
-      };
-    }> => {
+    queryFn: (): Promise<Discover> => {
       return howl(`/discover`);
+    },
+  });
+  const { data: arrival } = useQuery({
+    queryKey: ["discover", arrivalType],
+    queryFn: (): Promise<Discover> => {
+      if (arrivalType === "All") {
+        return howl(`/discover`);
+      } else {
+        return howl(`/discover?filter[watch_type]=${arrivalType}`);
+      }
     },
   });
   return (
@@ -87,7 +101,11 @@ export default function Page() {
           ))}
       </Marquee>
       <Brands />
-      <Arrival data={data?.data?.listings?.data} />
+      <Arrival
+        data={arrival?.data?.listings?.data}
+        type={arrivalType}
+        setArrivalType={setArrivalType}
+      />
       <Market />
       <Verif />
       <div className="py-24 bg-muted/30 text-center">

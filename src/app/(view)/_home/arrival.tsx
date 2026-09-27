@@ -8,6 +8,8 @@ import React from "react";
 
 export default function Arrival({
   data,
+  type,
+  setArrivalType,
 }: {
   data?: {
     id: number;
@@ -35,39 +37,12 @@ export default function Arrival({
     created_at: string;
     updated_at: string;
   }[];
+  type: string;
+  setArrivalType: React.Dispatch<React.SetStateAction<string>>;
 }) {
-  const [selectedCategory, setSelectedCategory] = React.useState<string>("All");
+  type Watch = NonNullable<typeof data>[number];
 
-  const fallbackWatches = [
-    {
-      id: "#",
-      seller: {
-        id: 1,
-        name: "Arjun",
-        standing: null,
-      },
-      brand: "Rolex",
-      model: "Submariner Date",
-      watch_type: "Diver",
-      reference_number: "",
-      price: 120000,
-      condition: "Mint",
-      case_size: "41mm",
-      year_of_production: "2020",
-      location: "Delhi NCR",
-      accessories: ["Box + Papers"],
-      condition_notes: "",
-      images: ["/watch.webp"],
-      brand_certificate: null,
-      market_momentum: 4,
-      status: "active",
-      is_verified: true,
-      created_at: "",
-      updated_at: "",
-    },
-  ];
-
-  const watches = data?.length ? data : fallbackWatches;
+  const watches = data?.length ? data : null;
 
   const formatPrice = (price?: number) => {
     if (typeof price !== "number") return "₹ 1,20,000";
@@ -75,16 +50,16 @@ export default function Arrival({
     return `₹ ${price.toLocaleString("en-IN")}`;
   };
 
-  const getImage = (watch: (typeof watches)[number]) => {
-    if (watch.images?.length && watch.images[0]) {
+  const getImage = (watch?: Watch) => {
+    if (watch?.images?.length && watch.images[0]) {
       return watch.images[0];
     }
 
     return "/watch.webp";
   };
 
-  const getAccessories = (watch: (typeof watches)[number]) => {
-    if (watch.accessories?.length) {
+  const getAccessories = (watch?: Watch) => {
+    if (watch?.accessories?.length) {
       return watch.accessories.slice(0, 1);
     }
 
@@ -115,9 +90,9 @@ export default function Arrival({
         ].map((x) => (
           <Button
             size="sm"
-            variant={selectedCategory === x ? "default" : "outline"}
+            variant={type === x ? "default" : "outline"}
             key={x}
-            onClick={() => setSelectedCategory(x)}
+            onClick={() => setArrivalType(x)}
           >
             {x}
           </Button>
@@ -125,7 +100,7 @@ export default function Arrival({
       </div>
 
       <div className="w-full grid grid-cols-5 mt-12">
-        {watches.slice(0, 5).map((watch) => (
+        {watches?.slice(0, 5).map((watch) => (
           <div
             className="flex flex-col relative justify-start items-center gap-4 border border-transparent hover:border-primary/20 hover:bg-primary/5 active:bg-primary/10 transition-all duration-300 cursor-pointer"
             key={watch.id}

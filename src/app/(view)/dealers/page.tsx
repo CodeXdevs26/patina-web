@@ -90,7 +90,6 @@ export default function BrowsePage() {
           <div>
             <h3 className="font-display text-lg mb-4">Search & Filter</h3>
           </div>
-
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
             <div className="col-span-2"></div>
             <Input

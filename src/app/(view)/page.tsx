@@ -80,25 +80,19 @@ export default function Page() {
     <>
       <Header data={data?.data?.listings?.data?.slice(0, 3)} />
       <Marquee speed={30} pauseOnHover>
-        {Array(10)
-          .fill({
-            title: "Rolex Submariner",
-            price: "₹ 1,20,000",
-            trend: "+6.5%",
-          })
-          .map((item, index) => (
-            <div
-              // biome-ignore lint/suspicious/noArrayIndexKey: sss
-              key={index}
-              className="flex flex-row gap-4 border-r p-3 items-center"
-            >
-              <h3 className="text-xs text-muted-foreground/50">{item.title}</h3>
-              <p className="text-xl text-muted-foreground font-display">
-                {item.price}
-              </p>
-              <p className="text-sm text-green-800">{item.trend}</p>
-            </div>
-          ))}
+        {data?.data?.listings?.data?.map((item, index) => (
+          <div
+            // biome-ignore lint/suspicious/noArrayIndexKey: sss
+            key={index}
+            className="flex flex-row gap-4 border-r p-3 items-center"
+          >
+            <h3 className="text-xs text-muted-foreground/50">{item?.model}</h3>
+            <p className="text-xl text-muted-foreground font-display">
+              {item?.price}
+            </p>
+            <p className="text-sm text-green-800">{item?.market_momentum}%</p>
+          </div>
+        ))}
       </Marquee>
       <Brands />
       <Arrival

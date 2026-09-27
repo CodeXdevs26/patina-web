@@ -5,16 +5,35 @@ import { Button } from "@/components/ui/button";
 import {
   TrendUpIcon,
   GearIcon as CogIcon,
+  DoorOpenIcon,
 } from "@phosphor-icons/react/dist/ssr";
 import HistoryPage from "./history-page";
 import ProfilePage from "./profile-page";
 import { useQuery } from "@tanstack/react-query";
 import { useCookies } from "react-cookie";
 import { howl } from "@/lib/utils";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 export default function DashboardPage() {
   const [currentPage, setCurrentPage] = React.useState("profile");
-  const [{ token }] = useCookies(["token"]);
+  const [{ token }, , removeToken] = useCookies(["token"]);
   const { data, isPending } = useQuery({
     queryKey: ["profile"],
     queryFn: async (): Promise<{
@@ -90,6 +109,41 @@ export default function DashboardPage() {
               <CogIcon size={16} className="mr-2" />
               Settings
             </Button>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button variant="ghost" className="w-full justify-start">
+                  <DoorOpenIcon size={16} className="mr-2" />
+                  Log Out
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>
+                    Are you sure you want to log out?
+                  </AlertDialogTitle>
+                  <AlertDialogDescription>
+                    You will be logged out of your account and will need to log
+                    back in to access your account.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Go Back</AlertDialogCancel>
+                  <AlertDialogAction
+                    variant="destructive"
+                    onClick={() => {
+                      try {
+                        removeToken("token");
+                        window.location.assign("/");
+                      } catch (e) {
+                        console.error("Error logging out:", e);
+                      }
+                    }}
+                  >
+                    Log Out
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           </div>
         </div>
       </div>

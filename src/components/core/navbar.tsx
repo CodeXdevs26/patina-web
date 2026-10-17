@@ -90,7 +90,7 @@ export default function Navbar() {
           </div>
         </div>
         <div className="flex items-center space-x-4">
-          {data?.data?.roles[0]?.name === "user" && (
+          {data?.data && (
             <Button
               variant="ghost"
               className="text-muted-foreground/80 uppercase text-[10px] bg-transparent! hover:text-primary"

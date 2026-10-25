@@ -102,7 +102,7 @@ export default function BrowsePage() {
             data={chartData}
             margin={{
               left: 12,
-              right: 12,
+              right: 12
             }}
           >
             <CartesianGrid vertical={false} />

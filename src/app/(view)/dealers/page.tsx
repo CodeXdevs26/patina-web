@@ -198,7 +198,7 @@ export default function BrowsePage() {
                   </p>
 
                   <Button asChild className="w-full mt-6">
-                    <Link href={`#`}>View Details</Link>
+                    <Link href={`/dealers/${data?.id}`}>View Details</Link>
                   </Button>
                 </div>
               </Card>

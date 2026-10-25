@@ -1,9 +1,12 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { howl } from "@/lib/utils";
+import { useQuery } from "@tanstack/react-query";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
+import { useCookies } from "react-cookie";
 const mockWatches = [
   {
     id: 1,
@@ -87,16 +90,74 @@ const mockWatches = [
   },
 ];
 export default function HistoryPage() {
+  const [{ token }] = useCookies(['token'])
+  const { data, isPending } = useQuery({
+    queryKey: ['purchase_history'],
+    queryFn: (): Promise<{
+      ok: boolean
+      message: string
+      data: {
+        purchases: {
+          data: {
+            current_page: number
+            data: Array<{
+              trend: string;
+              price: string;
+              id: number
+              listing_id: number
+              watch_title: string
+              reference_number: string
+              thumbnail: string
+              seller_name: string
+              seller_avatar: string
+              amount: string
+              status: string
+              tracking_number?: string
+              shipping_provider?: string
+              purchased_at: string
+            }>
+            first_page_url: string
+            from: number
+            last_page: number
+            last_page_url: string
+            links: Array<{
+              url?: string
+              label: string
+              page?: number
+              active: boolean
+            }>
+            next_page_url: any
+            path: string
+            per_page: number
+            prev_page_url: any
+            to: number
+            total: number
+          }
+          meta: {
+            current_page: number
+            last_page: number
+            per_page: number
+            total: number
+          }
+        }
+      }
+    }> => {
+      return howl('/user/purchases', {
+        token
+      })
+    }
+  })
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3  xl:grid-cols-4 divide-x! divide-y!">
-      {mockWatches.map((watch) => (
+      {data?.data?.purchases?.data?.data.map((watch) => (
         <Card
           key={watch.id}
           className="border-0 ring-0! border-border hover:bg-muted/50 transition-colors overflow-hidden flex flex-col pt-0! last-of-type:border-b"
         >
           <div className="bg-muted/30 h-48 flex items-center justify-center">
             <Image
-              src="/rolex.webp"
+              src={watch.thumbnail}
               alt="Watch"
               height={100}
               width={140}
@@ -108,33 +169,39 @@ export default function HistoryPage() {
             <div className="flex justify-between items-start mb-3">
               <div>
                 <p className="text-[10px] uppercase text-primary/50 mb-1">
-                  {watch.brand}
+                  {watch.seller_name}
                 </p>
-                <h3 className="font-display text-lg">{watch.model}</h3>
+                <h3 className="font-display text-lg">{watch.watch_title}</h3>
               </div>
               {/* <Button variant="ghost" size="sm">
                       <HeartIcon size={16} />
                     </Button> */}
+
             </div>
 
             <div className="flex gap-2 flex-wrap mb-4">
+
               <Badge variant="secondary" className="text-[10px] text-white">
-                {watch.year}
+                #{watch.reference_number}
               </Badge>
               <Badge variant="secondary" className="text-[10px] text-white">
-                {watch.condition}
+                {watch.shipping_provider}
               </Badge>
               <Badge variant="secondary" className="text-[10px] text-white">
-                {watch.location}
+                {watch.tracking_number}
               </Badge>
             </div>
 
+            <p className="text-[10px] text-white">
+              Status: {watch.status}
+            </p>
+
             <div className="flex-1">
-              <h4 className="font-display text-2xl">{watch.price}</h4>
-              <p className="text-sm text-green-600">{watch.trend}</p>
+              <h4 className="font-display text-2xl">{watch?.price}</h4>
+              <p className="text-sm text-green-600">{watch?.trend}</p>
             </div>
             <p className="text-sm text-end text-muted-foreground">
-              Date: {new Date().toLocaleDateString()}
+              Date: {new Date(watch.purchased_at).toDateString()}
             </p>
             {/* 
             <Button asChild className="w-full">

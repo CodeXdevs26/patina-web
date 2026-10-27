@@ -178,9 +178,7 @@ export default function HistoryPage() {
                     </Button> */}
 
             </div>
-
             <div className="flex gap-2 flex-wrap mb-4">
-
               <Badge variant="secondary" className="text-[10px] text-white">
                 #{watch.reference_number}
               </Badge>

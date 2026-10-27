@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,18 +9,46 @@ import { CheckCircleIcon } from "@phosphor-icons/react/dist/ssr";
 import { useMutation } from "@tanstack/react-query";
 import { howl } from "@/lib/utils";
 import { toast } from "sonner";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
+import { useCookies } from "react-cookie";
 
-export default function VerifyEmailPage() {
-  const [codes, setCodes] = useState(["", "", "", "", "", ""]);
+const OTP_LENGTH = 6;
+
+function VerifyEmailForm() {
+  const [codes, setCodes] = useState<string[]>(Array(OTP_LENGTH).fill(""));
   const [verified, setVerified] = useState(false);
   const [timeLeft, setTimeLeft] = useState(300); // 5 minutes
   const searchParams = useSearchParams();
   const email = searchParams.get("email") || "";
-  const navig = useRouter();
+  const [{ token }, setCookie] = useCookies(['token'])
   const { mutate, isPending } = useMutation({
     mutationKey: ["verify-email"],
-    mutationFn: () => {
+    mutationFn: (): Promise<{
+      ok: boolean
+      message: string
+      data: {
+        access_token: string
+        token_type: string
+        user: {
+          id: number
+          name: string
+          email: string
+          email_verified_at: string
+          phone_number: any
+          company_name: any
+          razorpay_account_id: any
+          kyc_status: string
+          kyc_rejection_reason: any
+          account_standing: string
+          available_listing_credits: number
+          average_rating: string
+          total_reviews: number
+          avatar: string
+          created_at: string
+          updated_at: string
+        }
+      }
+    }> => {
       return howl(`/auth/verify`, {
         method: "POST",
         body: { email, otp: codes.join("") },
@@ -31,7 +59,9 @@ export default function VerifyEmailPage() {
     },
     onSuccess: (res: any) => {
       toast.success(res.message ?? "Success!");
-      navig.push("/auth/login");
+      setVerified(true);
+      setCookie('token', res.data.access_token, { path: '/' });
+      window.location.href = "/auth/kyc";
     },
   });
 
@@ -48,27 +78,56 @@ export default function VerifyEmailPage() {
     return `${mins}:${secs.toString().padStart(2, "0")}`;
   };
 
-  const handleCodeChange = (index: number, value: string) => {
-    if (value.length <= 1 && /^[0-9]*$/.test(value)) {
-      const newCodes = [...codes];
-      newCodes[index] = value;
-      setCodes(newCodes);
+  const focusInput = (index: number) => {
+    document.getElementById(`code-${index}`)?.focus();
+  };
 
-      // Auto-focus to next input
-      if (value && index < 5) {
-        const nextInput = document.getElementById(`code-${index + 1}`);
-        nextInput?.focus();
-      }
+  // Fills boxes starting at `start` with the digits found in `raw`
+  const fillFrom = (start: number, raw: string) => {
+    const digits = raw.replace(/\D/g, "");
+    if (!digits) return;
+
+    const newCodes = [...codes];
+    let i = start;
+    for (const d of digits) {
+      if (i >= OTP_LENGTH) break;
+      newCodes[i] = d;
+      i++;
+    }
+    setCodes(newCodes);
+    focusInput(Math.min(i, OTP_LENGTH - 1));
+  };
+
+  const handleCodeChange = (index: number, value: string) => {
+    if (value === "") {
+      const newCodes = [...codes];
+      newCodes[index] = "";
+      setCodes(newCodes);
+      return;
+    }
+    fillFrom(index, value);
+  };
+
+  const handlePaste = (
+    index: number,
+    e: React.ClipboardEvent<HTMLInputElement>,
+  ) => {
+    e.preventDefault();
+    fillFrom(index, e.clipboardData.getData("text"));
+  };
+
+  const handleKeyDown = (
+    index: number,
+    e: React.KeyboardEvent<HTMLInputElement>,
+  ) => {
+    if (e.key === "Backspace" && !codes[index] && index > 0) {
+      focusInput(index - 1);
     }
   };
 
   const handleVerify = (e: React.FormEvent) => {
     e.preventDefault();
-    const fullCode = codes.join("");
-    if (fullCode.length === 6) {
-      setVerified(true);
-      console.log("Email verified with code:", fullCode);
-    }
+    if (codes.join("").length === OTP_LENGTH) mutate();
   };
 
   if (verified) {
@@ -84,11 +143,14 @@ export default function VerifyEmailPage() {
               Your email has been successfully verified. You can now access all
               features of PATINA.
             </p>
+            <p className="text-sm text-muted-foreground">
+              Redirecting to KYC page in 5 seconds...
+            </p>
           </div>
 
-          <Button asChild size="lg" className="w-full">
-            <Link href="/dashboard">Go to Dashboard</Link>
-          </Button>
+          {/* <Button asChild size="lg" className="w-full">
+            <Link href="/auth/login">Continue to Login</Link>
+          </Button> */}
         </div>
       </div>
     );
@@ -116,14 +178,18 @@ export default function VerifyEmailPage() {
             <div className="flex gap-2 justify-center">
               {codes.map((code, index) => (
                 <Input
-                  // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
+                  // biome-ignore lint/suspicious/noArrayIndexKey: fixed-length OTP boxes
                   key={index}
                   id={`code-${index}`}
                   type="text"
-                  maxLength={1}
+                  inputMode="numeric"
+                  autoComplete={index === 0 ? "one-time-code" : "off"}
                   placeholder="•"
                   value={code}
                   onChange={(e) => handleCodeChange(index, e.target.value)}
+                  onPaste={(e) => handlePaste(index, e)}
+                  onKeyDown={(e) => handleKeyDown(index, e)}
+                  onFocus={(e) => e.target.select()}
                   className="w-12 h-12 text-center text-lg font-display"
                 />
               ))}
@@ -147,10 +213,9 @@ export default function VerifyEmailPage() {
             type="submit"
             size="lg"
             className="w-full"
-            disabled={codes.join("").length !== 6 || isPending}
-            onClick={() => mutate()}
+            disabled={codes.join("").length !== OTP_LENGTH || isPending}
           >
-            Verify Email
+            {isPending ? "Verifying..." : "Verify Email"}
           </Button>
         </form>
 
@@ -158,11 +223,24 @@ export default function VerifyEmailPage() {
           <p className="text-xs text-muted-foreground">
             Didn&apos;t receive the code?
           </p>
-          <Button variant="ghost" size="sm" className="text-primary">
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            className="text-primary"
+          >
             Resend Code
           </Button>
         </div>
       </div>
     </div>
+  );
+}
+
+export default function VerifyEmailPage() {
+  return (
+    <Suspense fallback={null}>
+      <VerifyEmailForm />
+    </Suspense>
   );
 }
